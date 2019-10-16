@@ -1,15 +1,20 @@
 "use strict";
 
 class Translator {
-  constructor() {
+  constructor(options = {}) {
+    this._options = Object.assign({}, this.defaultConfig, options);
     this._lang = this.getLanguage();
     this._elements = document.querySelectorAll("[data-i18n]");
   }
 
   getLanguage() {
+    if (!this._options.detectLanguage) {
+      return this._options.defaultLanguage;
+    }
+    
     var stored = localStorage.getItem("language");
 
-    if (stored) {
+    if (this._options.persist && stored) {
       return stored;
     }
     
@@ -20,17 +25,27 @@ class Translator {
 
   load(lang = null) {
     if (lang) {
+      if (!this._options.languages.includes(lang)) {
+        return;
+      }
+
       this._lang = lang;
     }
 
-    fetch(`/i18n/${this._lang}.js`)
+    var path = `${this._options.filesLocation}/${this._lang}.json`;
+
+    fetch(path)
       .then((response) => response.json())
       .then((translation) => {
         this.translate(translation);
         this.toggleLangTag();
+
+        if (this._options.persist) {
+          localStorage.setItem("language", this._lang);
+        }
       })
       .catch(() => {
-        console.error(`Could not load "${this._lang}.js". Please make sure that the path is correct.`);
+        console.error(`Could not load ${path}. Please make sure that the path is correct.`);
       });
   }
 
@@ -50,6 +65,16 @@ class Translator {
     }
   
     this._elements.forEach(replace);
+  }
+
+  get defaultConfig() {
+    return {
+      persist: false,
+      languages: ["en"],
+      defaultLanguage: "en",
+      detectLanguage: true,
+      filesLocation: "/i18n"
+    };
   }
 }
 

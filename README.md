@@ -45,8 +45,29 @@ translator.load(lang);
 |––|–– en.json
 |––|–– de.json
 |––|–– es.json
+```
 
 ## Options
+
+When initializing `Translator`, you can pass an object with options:
+
+```js
+var translator = new Translator({
+  persist: true,
+  languages: ["de", "en", "es"],
+  defaultLanguage: "en",
+  detectLanguage: true,
+  filesLocation: "/i18n"
+});
+```
+
+| Option  | Type | Default | Description |
+|---|---|---|---|
+| persist | `Boolean` | `true` | Whether or not the last selected language should be stored in the browser's localStorage. |
+| languages | `Array` | `["en"]` | The available languages. For each language, a JSON file must be located in the localization folder. |
+| defaultLanguage | `String` | `"en"` | The default language to load. |
+| detectLanguage | `Boolean` | `true` | Whether or not the script should try to determine the user's desired language. This will override `defaultLanguage`. |
+| filesLocation | `String` | `"/i18n"` | The absolute path (from your project's root) to your localization files. |
 
 ## Browser support
 
