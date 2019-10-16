@@ -2,6 +2,8 @@
 
 This script provides a quick and easy way to translate content on your website with only a few lines of JavaScript code.
 
+For a full example, [please look here](https://codesandbox.io/s/i18n-example-ipfeu?fontsize=14).
+
 ## Installation
 
 Clone this repository or download the `translator.js` file separately and put it into your project folder where all your JavaScript is located.
@@ -47,6 +49,26 @@ translator.load(lang);
 |––|–– es.json
 ```
 
+**en.json:**
+```json
+{
+  "header": {
+    "title": "English title"
+  }
+}
+```
+
+**de.json:**
+```json
+{
+  "header": {
+    "title": "Deutscher Titel"
+  }
+}
+```
+
+For an advanced example, [please look here](https://codesandbox.io/s/i18n-example-ipfeu?fontsize=14).
+
 ## Options
 
 When initializing `Translator`, you can pass an object with options:
@@ -71,4 +93,12 @@ var translator = new Translator({
 
 ## Browser support
 
+* Edge <= 16
+* Firefox <= 60
+* Chrome <= 61
+* Safari <= 10
+* Opera <= 48
+
 ## Issues
+
+Did you find any issues, bugs or improvements you'd like to see implemented? Feel free to [open an issue on GitHub](https://github.com/andreasremdt/simple-translator/issues). Any feedback is appreciated.
