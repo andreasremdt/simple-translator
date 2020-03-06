@@ -61,9 +61,12 @@ class Translator {
   
       if (text) {
         element.innerHTML = text;
+      } else {
+        element.innerHTML = element.dataset.i18n;
+        console.error(`Could not find text for ${element.dataset.i18n}`);
       }
     }
-  
+
     this._elements.forEach(replace);
   }
 
