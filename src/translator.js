@@ -82,14 +82,15 @@ class Translator {
 
   _translate(translation) {
     function replace(element) {
+      var property = element.dataset.i18nAttr || "innerHTML";
       var text = element.dataset.i18n
         .split(".")
         .reduce((obj, i) => obj[i], translation);
 
       if (text) {
-        element.innerHTML = text;
+        element[property] = text;
       } else {
-        element.innerHTML = element.dataset.i18n;
+        element[property] = element.dataset.i18n;
         console.warn(
           `Could not find text for attribute "${element.dataset.i18n}".`
         );
@@ -109,3 +110,5 @@ class Translator {
     };
   }
 }
+
+export default Translator;
