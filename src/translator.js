@@ -3,7 +3,6 @@
 class Translator {
   constructor(options = {}) {
     this._options = Object.assign({}, this.defaultConfig, options);
-    this._lang = this._detectLanguage();
     this._elements = document.querySelectorAll("[data-i18n]");
     this._cache = new Map();
   }
@@ -26,9 +25,7 @@ class Translator {
     return lang.substr(0, 2);
   }
 
-  _fetch() {
-    var path = `${this._options.filesLocation}/${this._lang}.json`;
-
+  _fetch(path) {
     return new Promise(function(resolve) {
       fetch(path)
         .then(response => response.json())
@@ -41,39 +38,49 @@ class Translator {
     });
   }
 
-  async _getResource() {
-    if (this._cache.has(this._lang)) {
-      return JSON.parse(this._cache.get(this._lang));
+  async _getResource(lang) {
+    if (this._cache.has(lang)) {
+      return JSON.parse(this._cache.get(lang));
     }
 
-    var translation = await this._fetch();
+    var translation = await this._fetch(
+      `${this._options.filesLocation}/${lang}.json`
+    );
 
-    if (!this._cache.has(this._lang)) {
-      this._cache.set(this._lang, JSON.stringify(translation));
+    if (!this._cache.has(lang)) {
+      this._cache.set(lang, JSON.stringify(translation));
     }
 
     return translation;
   }
 
-  async load(lang = null) {
-    if (lang) {
-      if (!this._options.languages.includes(lang)) {
-        return;
-      }
-
-      this._lang = lang;
+  async load(lang) {
+    if (!this._options.languages.includes(lang)) {
+      return;
     }
 
-    this.translate(await this._getResource());
+    this._translate(await this._getResource(lang));
 
     document.documentElement.lang = lang;
 
     if (this._options.persist) {
-      localStorage.setItem("language", this._lang);
+      localStorage.setItem("language", lang);
     }
   }
 
-  translate(translation) {
+  async getTranslationByKey(lang, key) {
+    if (!key) throw new Error("Expected a key to translate, got nothing.");
+    if (typeof key != "string")
+      throw new Error(
+        `Expected a string for the key parameter, got ${typeof key} instead.`
+      );
+
+    var translation = await this._getResource(lang);
+
+    return key.split(".").reduce((obj, i) => obj[i], translation);
+  }
+
+  _translate(translation) {
     function replace(element) {
       var text = element.dataset.i18n
         .split(".")
@@ -102,8 +109,3 @@ class Translator {
     };
   }
 }
-
-// export default Translator;
-var t = new Translator({
-  languages: ["en", "de"]
-});
