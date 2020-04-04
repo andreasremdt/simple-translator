@@ -5,6 +5,13 @@ class Translator {
     this._options = Object.assign({}, this.defaultConfig, options);
     this._elements = document.querySelectorAll("[data-i18n]");
     this._cache = new Map();
+
+    if (
+      this._options.defaultLanguage &&
+      typeof this._options.defaultLanguage == "string"
+    ) {
+      this._getResource(this._options.defaultLanguage);
+    }
   }
 
   _detectLanguage() {
@@ -26,16 +33,13 @@ class Translator {
   }
 
   _fetch(path) {
-    return new Promise(function(resolve) {
-      fetch(path)
-        .then(response => response.json())
-        .then(resolve)
-        .catch(() => {
-          console.error(
-            `Could not load ${path}. Please make sure that the file exists.`
-          );
-        });
-    });
+    return fetch(path)
+      .then(response => response.json())
+      .catch(() => {
+        console.error(
+          `Could not load ${path}. Please make sure that the file exists.`
+        );
+      });
   }
 
   async _getResource(lang) {
@@ -70,6 +74,7 @@ class Translator {
 
   async getTranslationByKey(lang, key) {
     if (!key) throw new Error("Expected a key to translate, got nothing.");
+
     if (typeof key != "string")
       throw new Error(
         `Expected a string for the key parameter, got ${typeof key} instead.`
@@ -80,22 +85,32 @@ class Translator {
     return key.split(".").reduce((obj, i) => obj[i], translation);
   }
 
+  _getValueFromJSON(key, json) {
+    return key.split(".").reduce((obj, i) => obj[i], json);
+  }
+
   _translate(translation) {
-    function replace(element) {
-      var property = element.dataset.i18nAttr || "innerHTML";
-      var text = element.dataset.i18n
-        .split(".")
-        .reduce((obj, i) => obj[i], translation);
+    var replace = element => {
+      var key = element.getAttribute("data-i18n");
+      var property = element.getAttribute("data-i18n-attr") || "innerHTML";
+      var text = this._getValueFromJSON(key, translation);
+
+      if (!text && this._options.defaultLanguage) {
+        let fallbackTranslation = JSON.parse(
+          this._cache.get(this._options.defaultLanguage)
+        );
+
+        text = this._getValueFromJSON(key, fallbackTranslation);
+      }
 
       if (text) {
         element[property] = text;
       } else {
         element[property] = element.dataset.i18n;
-        console.warn(
-          `Could not find text for attribute "${element.dataset.i18n}".`
-        );
+
+        console.warn(`Could not find text for attribute "${key}".`);
       }
-    }
+    };
 
     this._elements.forEach(replace);
   }
@@ -104,7 +119,7 @@ class Translator {
     return {
       persist: false,
       languages: ["en"],
-      defaultLanguage: "en",
+      defaultLanguage: "",
       detectLanguage: true,
       filesLocation: "/i18n"
     };
