@@ -34,7 +34,7 @@ class Translator {
 
   _fetch(path) {
     return fetch(path)
-      .then(response => response.json())
+      .then((response) => response.json())
       .catch(() => {
         console.error(
           `Could not load ${path}. Please make sure that the file exists.`
@@ -82,26 +82,28 @@ class Translator {
 
     var translation = await this._getResource(lang);
 
-    return key.split(".").reduce((obj, i) => obj[i], translation);
+    return this._getValueFromJSON(key, translation);
   }
 
   _getValueFromJSON(key, json) {
-    return key.split(".").reduce((obj, i) => obj[i], json);
+    var text = key.split(".").reduce((obj, i) => obj[i], json);
+
+    if (!text && this._options.defaultLanguage) {
+      let fallbackTranslation = JSON.parse(
+        this._cache.get(this._options.defaultLanguage)
+      );
+
+      text = this._getValueFromJSON(key, fallbackTranslation);
+    }
+
+    return text;
   }
 
   _translate(translation) {
-    var replace = element => {
+    var replace = (element) => {
       var key = element.getAttribute("data-i18n");
       var property = element.getAttribute("data-i18n-attr") || "innerHTML";
       var text = this._getValueFromJSON(key, translation);
-
-      if (!text && this._options.defaultLanguage) {
-        let fallbackTranslation = JSON.parse(
-          this._cache.get(this._options.defaultLanguage)
-        );
-
-        text = this._getValueFromJSON(key, fallbackTranslation);
-      }
 
       if (text) {
         element[property] = text;
@@ -121,7 +123,7 @@ class Translator {
       languages: ["en"],
       defaultLanguage: "",
       detectLanguage: true,
-      filesLocation: "/i18n"
+      filesLocation: "/i18n",
     };
   }
 }

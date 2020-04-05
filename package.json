@@ -1,6 +1,6 @@
 {
   "name": "simple-translator",
-  "version": "1.1.0",
+  "version": "1.1.1",
   "description": "Simple client-side translation with pure JavaScript.",
   "main": "translator.js",
   "scripts": {

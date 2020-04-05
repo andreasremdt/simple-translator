@@ -98,7 +98,9 @@ By default, if `data-i18n-attr` is not defined, the `innerHTML` will be translat
 Alternatively, you can translate a single, given key via the method `getTranslationByKey(lang, key)`. The first argument should be a valid language string like "en" or "de", the second argument should be a key from your translation files, such as "header.title".
 
 ```js
-translator.getTranslationByKey("en", "header.title");
+translator
+  .getTranslationByKey("en", "header.title")
+  .then((translation) => console.log(translation));
 // --> prints "English title"
 ```
 
@@ -112,7 +114,7 @@ var translator = new Translator({
   languages: ["de", "en", "es"],
   defaultLanguage: "en",
   detectLanguage: true,
-  filesLocation: "/i18n"
+  filesLocation: "/i18n",
 });
 ```
 
