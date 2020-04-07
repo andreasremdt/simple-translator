@@ -82,7 +82,7 @@ class Translator {
 
     var translation = await this._getResource(lang);
 
-    return this._getValueFromJSON(key, translation);
+    return this._getValueFromJSON(key, translation, true);
   }
 
   _getValueFromJSON(key, json, fallback) {
