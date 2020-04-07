@@ -85,15 +85,15 @@ class Translator {
     return this._getValueFromJSON(key, translation);
   }
 
-  _getValueFromJSON(key, json) {
+  _getValueFromJSON(key, json, fallback) {
     var text = key.split(".").reduce((obj, i) => obj[i], json);
 
-    if (!text && this._options.defaultLanguage) {
+    if (!text && this._options.defaultLanguage && fallback) {
       let fallbackTranslation = JSON.parse(
         this._cache.get(this._options.defaultLanguage)
       );
 
-      text = this._getValueFromJSON(key, fallbackTranslation);
+      text = this._getValueFromJSON(key, fallbackTranslation, false);
     }
 
     return text;
@@ -103,7 +103,7 @@ class Translator {
     var replace = (element) => {
       var key = element.getAttribute("data-i18n");
       var property = element.getAttribute("data-i18n-attr") || "innerHTML";
-      var text = this._getValueFromJSON(key, translation);
+      var text = this._getValueFromJSON(key, translation, true);
 
       if (text) {
         element[property] = text;
