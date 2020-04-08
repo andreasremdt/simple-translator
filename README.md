@@ -95,11 +95,11 @@ By default, if `data-i18n-attr` is not defined, the `innerHTML` will be translat
 
 ### Translating programmatically
 
-Alternatively, you can translate a single, given key via the method `getTranslationByKey(lang, key)`. The first argument should be a valid language string like "en" or "de", the second argument should be a key from your translation files, such as "header.title".
+Alternatively, you can translate a single, given key via the method `getTranslationByKey(lang, key, fallback)`. The first argument should be a valid language string like "en" or "de", the second argument should be a key from your translation files, such as "header.title", the third argument handles possible fallback to `defaultLanguage` (true/false).
 
 ```js
 translator
-  .getTranslationByKey("en", "header.title")
+  .getTranslationByKey("en", "header.title", true)
   .then((translation) => console.log(translation));
 // --> prints "English title"
 ```
