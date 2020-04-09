@@ -94,6 +94,9 @@ class Translator {
       );
 
       text = this._getValueFromJSON(key, fallbackTranslation, false);
+    } else if (!text) {
+      text = key;
+      console.warn(`Could not find text for attribute "${key}".`);
     }
 
     return text;
@@ -108,9 +111,7 @@ class Translator {
       if (text) {
         element[property] = text;
       } else {
-        element[property] = element.dataset.i18n;
-
-        console.warn(`Could not find text for attribute "${key}".`);
+        console.error(`Could not find text for attribute "${key}".`);
       }
     };
 
