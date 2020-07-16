@@ -1,80 +1,88 @@
 class Translator {
   constructor(options) {
-    this._languages = new Map();
-    this._config = Object.assign(Translator.defaultConfig, options);
+    this.languages = new Map();
+    this.config = Object.assign(Translator.defaultConfig, options);
 
-    if (this._config.registerGlobally) {
-      window[this._config.registerGlobally] = this.translateForKey.bind(this);
+    if (this.config.registerGlobally) {
+      window[this.config.registerGlobally] = this.translateForKey.bind(this);
     }
 
-    if (this._config.detectLanguage) {
-      this._detectLanguage();
+    if (this.config.detectLanguage) {
+      this.detectLanguage();
     }
   }
 
-  _detectLanguage() {
-    var inMemory = localStorage.getItem(this._config.persistKey);
+  detectLanguage() {
+    const inMemory = localStorage.getItem(this.config.persistKey);
 
     if (inMemory) {
-      this._config.defaultLanguage = inMemory;
+      this.config.defaultLanguage = inMemory;
     } else {
-      var lang = navigator.languages
+      const lang = navigator.languages
         ? navigator.languages[0]
         : navigator.language;
-  
-      this._config.defaultLanguage = lang.substr(0, 2);
+
+      this.config.defaultLanguage = lang.substr(0, 2);
     }
   }
 
-  _getValueFromJSON(key, toLanguage) {
-    var json = this._languages.get(toLanguage ? toLanguage : this._config.defaultLanguage);
+  getValueFromJSON(key, toLanguage) {
+    const json = this.languages.get(toLanguage || this.config.defaultLanguage);
 
-    return key.split(".").reduce((obj, i) => obj[i], json);
+    return key.split('.').reduce((obj, i) => obj[i], json);
   }
 
-  _debug(message) {
-    if (this._config.debug) {
+  debug(message) {
+    if (this.config.debug) {
       console.error(message);
     }
   }
 
   replace(element, toLanguage) {
-    var key = element.getAttribute("data-i18n");
-    var property = element.getAttribute("data-i18n-attr") || "innerHTML";
-    var text = this._getValueFromJSON(key, toLanguage);
+    const key = element.getAttribute('data-i18n');
+    const property = element.getAttribute('data-i18n-attr') || 'innerHTML';
+    const text = this.getValueFromJSON(key, toLanguage);
 
     if (text) {
       element[property] = text;
     } else {
-      this._debug(`No translation found for key "${key}" in language "${toLanguage}".`);
+      this.debug(
+        `No translation found for key "${key}" in language "${toLanguage}".`
+      );
     }
   }
 
-  translatePageTo(toLanguage = this._config.defaultLanguage) {
-    if (!this._languages.has(toLanguage)) {
-      this._debug(`No translation for lang key "${toLanguage}" has been specified.`);
+  translatePageTo(toLanguage = this.config.defaultLanguage) {
+    if (!this.languages.has(toLanguage)) {
+      this.debug(
+        `No translation for lang key "${toLanguage}" has been specified.`
+      );
       return;
     }
 
     document
-      .querySelectorAll(this._config.selector)
+      .querySelectorAll(this.config.selector)
       .forEach((element) => this.replace(element, toLanguage));
 
-    if (this._config.persist) {
-      localStorage.setItem(this._config.persistKey, toLanguage);
+    if (this.config.persist) {
+      localStorage.setItem(this.config.persistKey, toLanguage);
     }
   }
 
-  translateForKey(key, toLanguage = this._config.defaultLanguage) {
-    if (!this._languages.has(toLanguage)) {
-      this._debug(`No translation for lang key "${toLanguage}" has been specified.`);
+  translateForKey(key, toLanguage = this.config.defaultLanguage) {
+    if (!this.languages.has(toLanguage)) {
+      this.debug(
+        `No translation for lang key "${toLanguage}" has been specified.`
+      );
       return;
     }
 
-    var text = this._getValueFromJSON(key, toLanguage);
+    const text = this.getValueFromJSON(key, toLanguage);
 
     if (!text) {
-      this._debug(`No translation found for key "${key}" in language "${toLanguage}".`);
+      this.debug(
+        `No translation found for key "${key}" in language "${toLanguage}".`
+      );
       return;
     }
 
@@ -82,7 +90,7 @@ class Translator {
   }
 
   add(language, json) {
-    this._languages.set(language, json);
+    this.languages.set(language, json);
 
     return this;
   }
@@ -95,7 +103,7 @@ class Translator {
       registerGlobally: '__',
       detectLanguage: true,
       persist: false,
-      persistKey: 'preferred_language'
+      persistKey: 'preferred_language',
     };
   }
 }
