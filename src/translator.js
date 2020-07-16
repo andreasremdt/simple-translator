@@ -1,130 +1,101 @@
-"use strict";
-
 class Translator {
-  constructor(options = {}) {
-    this._options = Object.assign({}, this.defaultConfig, options);
-    this._elements = document.querySelectorAll("[data-i18n]");
-    this._cache = new Map();
+  constructor(options) {
+    this._languages = new Map();
+    this._config = Object.assign(Translator.defaultConfig, options);
 
-    if (
-      this._options.defaultLanguage &&
-      typeof this._options.defaultLanguage == "string"
-    ) {
-      this._getResource(this._options.defaultLanguage);
+    if (this._config.registerGlobally) {
+      window[this._config.registerGlobally] = this.translateForKey.bind(this);
+    }
+
+    if (this._config.detectLanguage) {
+      this._detectLanguage();
     }
   }
 
   _detectLanguage() {
-    if (!this._options.detectLanguage) {
-      return this._options.defaultLanguage;
+    var inMemory = localStorage.getItem(this._config.persistKey);
+
+    if (inMemory) {
+      this._config.defaultLanguage = inMemory;
+    } else {
+      var lang = navigator.languages
+        ? navigator.languages[0]
+        : navigator.language;
+  
+      this._config.defaultLanguage = lang.substr(0, 2);
     }
-
-    var stored = localStorage.getItem("language");
-
-    if (this._options.persist && stored) {
-      return stored;
-    }
-
-    var lang = navigator.languages
-      ? navigator.languages[0]
-      : navigator.language;
-
-    return lang.substr(0, 2);
   }
 
-  _fetch(path) {
-    return fetch(path)
-      .then((response) => response.json())
-      .catch(() => {
-        console.error(
-          `Could not load ${path}. Please make sure that the file exists.`
-        );
-      });
+  _getValueFromJSON(key, toLanguage) {
+    var json = this._languages.get(toLanguage ? toLanguage : this._config.defaultLanguage);
+
+    return key.split(".").reduce((obj, i) => obj[i], json);
   }
 
-  async _getResource(lang) {
-    if (this._cache.has(lang)) {
-      return JSON.parse(this._cache.get(lang));
+  _debug(message) {
+    if (this._config.debug) {
+      console.error(message);
     }
-
-    var translation = await this._fetch(
-      `${this._options.filesLocation}/${lang}.json`
-    );
-
-    if (!this._cache.has(lang)) {
-      this._cache.set(lang, JSON.stringify(translation));
-    }
-
-    return translation;
   }
 
-  async load(lang) {
-    if (!this._options.languages.includes(lang)) {
+  replace(element, toLanguage) {
+    var key = element.getAttribute("data-i18n");
+    var property = element.getAttribute("data-i18n-attr") || "innerHTML";
+    var text = this._getValueFromJSON(key, toLanguage);
+
+    if (text) {
+      element[property] = text;
+    } else {
+      this._debug(`No translation found for key "${key}" in language "${toLanguage}".`);
+    }
+  }
+
+  translatePageTo(toLanguage = this._config.defaultLanguage) {
+    if (!this._languages.has(toLanguage)) {
+      this._debug(`No translation for lang key "${toLanguage}" has been specified.`);
       return;
     }
 
-    this._translate(await this._getResource(lang));
+    document
+      .querySelectorAll(this._config.selector)
+      .forEach((element) => this.replace(element, toLanguage));
 
-    document.documentElement.lang = lang;
-
-    if (this._options.persist) {
-      localStorage.setItem("language", lang);
+    if (this._config.persist) {
+      localStorage.setItem(this._config.persistKey, toLanguage);
     }
   }
 
-  async getTranslationByKey(lang, key) {
-    if (!key) throw new Error("Expected a key to translate, got nothing.");
+  translateForKey(key, toLanguage = this._config.defaultLanguage) {
+    if (!this._languages.has(toLanguage)) {
+      this._debug(`No translation for lang key "${toLanguage}" has been specified.`);
+      return;
+    }
 
-    if (typeof key != "string")
-      throw new Error(
-        `Expected a string for the key parameter, got ${typeof key} instead.`
-      );
+    var text = this._getValueFromJSON(key, toLanguage);
 
-    var translation = await this._getResource(lang);
-
-    return this._getValueFromJSON(key, translation, true);
-  }
-
-  _getValueFromJSON(key, json, fallback) {
-    var text = key.split(".").reduce((obj, i) => obj[i], json);
-
-    if (!text && this._options.defaultLanguage && fallback) {
-      let fallbackTranslation = JSON.parse(
-        this._cache.get(this._options.defaultLanguage)
-      );
-
-      text = this._getValueFromJSON(key, fallbackTranslation, false);
-    } else if (!text) {
-      text = key;
-      console.warn(`Could not find text for attribute "${key}".`);
+    if (!text) {
+      this._debug(`No translation found for key "${key}" in language "${toLanguage}".`);
+      return;
     }
 
     return text;
   }
 
-  _translate(translation) {
-    var replace = (element) => {
-      var key = element.getAttribute("data-i18n");
-      var property = element.getAttribute("data-i18n-attr") || "innerHTML";
-      var text = this._getValueFromJSON(key, translation, true);
+  add(language, json) {
+    this._languages.set(language, json);
 
-      if (text) {
-        element[property] = text;
-      } else {
-        console.error(`Could not find text for attribute "${key}".`);
-      }
-    };
-
-    this._elements.forEach(replace);
+    return this;
   }
 
-  get defaultConfig() {
+  static get defaultConfig() {
     return {
-      persist: false,
-      languages: ["en"],
-      defaultLanguage: "",
+      defaultLanguage: 'en',
+      selector: '[data-i18n]',
+      debug: false,
+      registerGlobally: '__',
       detectLanguage: true,
-      filesLocation: "/i18n",
+      persist: false,
+      persistKey: 'preferred_language'
     };
   }
 }
