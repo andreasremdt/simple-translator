@@ -104,22 +104,28 @@ class Translator {
 
   _translate(translation) {
     var zip = (keys, values) => keys.map((key, i) => [key, values[i]]);
+    var nullSafeSplit = (str, separator) => str ? str.split(separator) : null;
+
     var replace = (element) => {
-      var keys = element.getAttribute("data-i18n")?.split(' ');
-      var properties = element.getAttribute("data-i18n-attr")?.split(' ') || ["innerHTML"];
-      var pairs = zip(keys, properties);
-
-      pairs.forEach(pair => {
-        const [key, property] = pair;
-        var text = this._getValueFromJSON(key, translation, true);
-
-        if (text) {
-          element[property] = text;
-          element.setAttribute(property, text);
-        } else {
-          console.error(`Could not find text for attribute "${key}".`);
-        }
-      });
+      var keys = nullSafeSplit(element.getAttribute("data-i18n"), ' ') || [];
+      var properties = nullSafeSplit(element.getAttribute("data-i18n-attr"), ' ') || ["innerHTML"];
+      
+      if(keys.length > 0 && keys.length !== properties.length) {
+        console.error("data-i18n and data-i18n-attr must contain the same number of items");
+      } else {
+        var pairs = zip(keys, properties);
+        pairs.forEach(pair => {
+          const [key, property] = pair;
+          var text = this._getValueFromJSON(key, translation, true);
+  
+          if (text) {
+            element[property] = text;
+            element.setAttribute(property, text);
+          } else {
+            console.error(`Could not find text for attribute "${key}".`);
+          }
+        });
+      }
     };
 
     this._elements.forEach(replace);
