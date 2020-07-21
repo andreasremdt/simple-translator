@@ -103,15 +103,28 @@ class Translator {
   }
 
   _translate(translation) {
-    var replace = (element) => {
-      var key = element.getAttribute("data-i18n");
-      var property = element.getAttribute("data-i18n-attr") || "innerHTML";
-      var text = this._getValueFromJSON(key, translation, true);
+    var zip = (keys, values) => keys.map((key, i) => [key, values[i]]);
+    var nullSafeSplit = (str, separator) => str ? str.split(separator) : null;
 
-      if (text) {
-        element[property] = text;
+    var replace = (element) => {
+      var keys = nullSafeSplit(element.getAttribute("data-i18n"), ' ') || [];
+      var properties = nullSafeSplit(element.getAttribute("data-i18n-attr"), ' ') || ["innerHTML"];
+      
+      if(keys.length > 0 && keys.length !== properties.length) {
+        console.error("data-i18n and data-i18n-attr must contain the same number of items");
       } else {
-        console.error(`Could not find text for attribute "${key}".`);
+        var pairs = zip(keys, properties);
+        pairs.forEach(pair => {
+          const [key, property] = pair;
+          var text = this._getValueFromJSON(key, translation, true);
+  
+          if (text) {
+            element[property] = text;
+            element.setAttribute(property, text);
+          } else {
+            console.error(`Could not find text for attribute "${key}".`);
+          }
+        });
       }
     };
 
