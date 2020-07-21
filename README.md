@@ -93,6 +93,21 @@ Use the `data-i18n-attr` attribute on any HTML element to specifiy what you want
 
 By default, if `data-i18n-attr` is not defined, the `innerHTML` will be translated.
 
+### Multiple attributes
+
+You can also translate more than one attribute at the time by providing a space-separated list:
+
+```html
+<input
+  data-i18n="input.title input.placeholder"
+  data-i18n-attr="title placeholder"
+  title="to be translated..."
+  placeholder="to be translated..."
+/>
+```
+
+If you want to translate two or more attributes, you must also provide a space-separated list of keys to `data-i18n`. If the amount of keys doesn't match the amount of attributes to translate, an error will be displayed in the console.
+
 ### Translating programmatically
 
 Alternatively, you can translate a single, given key via the method `getTranslationByKey(lang, key)`. The first argument should be a valid language string like "en" or "de", the second argument should be a key from your translation files, such as "header.title".
