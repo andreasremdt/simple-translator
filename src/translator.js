@@ -184,6 +184,57 @@ class Translator {
   }
 
   /**
+   * Fetch a translation resource from the web server. It can either fetch
+   * a single resource or an array of resources. After all resources are fetched,
+   * returns a Promise.
+   * If the optional, second parameter is set to true, the fetched translations
+   * will be added to the internal cache.
+   *
+   * @param {String|Array} sources
+   * @param {Boolean} save
+   * @return {Promise}
+   */
+  fetch(sources, save = true) {
+    if (!Array.isArray(sources)) {
+      sources = [sources];
+    }
+
+    const urls = sources.map((source) => {
+      const filename = source.replace(/\.json$/, '').replace(/^\//, '');
+      const config = this.config.filesLocation.replace(/\/$/, '');
+
+      return `${config}/${filename}.json`;
+    });
+
+    return Promise.all(urls.map((url) => fetch(url)))
+      .then((responses) =>
+        Promise.all(
+          responses.map((response) => {
+            if (response.ok) {
+              return response.json();
+            }
+
+            this.debug(
+              `Could not fetch "${response.url}": ${response.status} (${response.statusText})`
+            );
+          })
+        )
+      )
+      .then((languageFiles) => {
+        // If a file could not be fetched, it will be `undefined` and filtered out.
+        languageFiles = languageFiles.filter((file) => file);
+
+        if (save) {
+          languageFiles.forEach((file, index) => {
+            this.add(sources[index], file);
+          });
+        }
+
+        return languageFiles.length > 1 ? languageFiles : languageFiles[0];
+      });
+  }
+
+  /**
    * Return the default config object whose keys can be overriden
    * by the user's config passed to the constructor.
    *
@@ -198,6 +249,7 @@ class Translator {
       detectLanguage: true,
       persist: false,
       persistKey: 'preferred_language',
+      filesLocation: '/i18n',
     };
   }
 }
