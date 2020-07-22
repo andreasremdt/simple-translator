@@ -2,10 +2,13 @@
   "name": "simple-translator",
   "version": "2.0.0",
   "description": "Simple client-side translation with pure JavaScript.",
-  "main": "src/index.js",
+  "main": "dist/translator.js",
   "scripts": {
+    "prebuild": "rm -rf dist/",
+    "build": "babel src/ -d dist",
     "lint": "eslint src/*.js",
-    "format": "prettier src/*.js --write"
+    "format": "prettier src/*.js --write",
+    "validate": "npm-run-all --parallel format lint build"
   },
   "repository": {
     "type": "git",
@@ -16,6 +19,9 @@
     "tanslation",
     "i18n"
   ],
+  "files": [
+    "dist/"
+  ],
   "author": "Andreas Remdt <me@andreasremdt.com> (https://andreasremdt.com)",
   "license": "MIT",
   "bugs": {
@@ -23,15 +29,20 @@
   },
   "homepage": "https://github.com/andreasremdt/simple-translator#readme",
   "devDependencies": {
+    "@babel/cli": "^7.10.5",
+    "@babel/core": "^7.10.5",
+    "@babel/preset-env": "^7.10.4",
+    "babel-preset-minify": "^0.5.1",
     "eslint": "^7.4.0",
     "eslint-config-google": "^0.14.0",
     "eslint-config-prettier": "^6.11.0",
     "husky": "^4.2.5",
+    "npm-run-all": "^4.1.5",
     "prettier": "^2.0.5"
   },
   "husky": {
     "hooks": {
-      "pre-commit": "npm run lint"
+      "pre-commit": "npm run validate"
     }
   }
 }

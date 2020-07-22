@@ -3,7 +3,7 @@
  * A small JavaScript library to translate webpages into different languages.
  * https://github.com/andreasremdt/simple-translator
  *
- * Author: Andreas Remdt <me@andreasremdt.com>
+ * Author: Andreas Remdt <me@andreasremdt.com> (https://andreasremdt.com)
  * License: MIT (https://mit-license.org/)
  */
 class Translator {
@@ -187,3 +187,4 @@ class Translator {
 }
 
 export default Translator;
+module.exports = Translator;
