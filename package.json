@@ -1,19 +1,27 @@
 {
   "name": "simple-translator",
-  "version": "1.1.1",
+  "version": "2.0.0",
   "description": "Simple client-side translation with pure JavaScript.",
-  "main": "translator.js",
+  "main": "src/index.js",
   "scripts": {
-    "lint": "eslint ./src/*.js",
-    "format": "prettier ./src/*.js --write"
+    "lint": "eslint src/*.js",
+    "format": "prettier src/*.js --write"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/andreasremdt/simple-translator.git"
   },
   "keywords": [
     "translator",
     "tanslation",
     "i18n"
   ],
-  "author": "Andreas Remdt",
-  "license": "ISC",
+  "author": "Andreas Remdt <me@andreasremdt.com> (https://andreasremdt.com)",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/andreasremdt/simple-translator/issues"
+  },
+  "homepage": "https://github.com/andreasremdt/simple-translator#readme",
   "devDependencies": {
     "eslint": "^7.4.0",
     "eslint-config-google": "^0.14.0",
