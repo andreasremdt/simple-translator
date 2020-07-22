@@ -71,24 +71,35 @@ class Translator {
   }
 
   /**
-   * Replace a given DOM nodes' property value (by default innerHTML) with
-   * a translated value.
+   * Replace a given DOM nodes' attribute values (by default innerHTML) with
+   * the translated text.
    *
    * @param {HTMLElement} element The DOM node to translate.
    * @param {String} toLanguage The target language.
    */
   replace(element, toLanguage) {
-    const key = element.getAttribute('data-i18n');
-    const property = element.getAttribute('data-i18n-attr') || 'innerHTML';
-    const text = this.getValueFromJSON(key, toLanguage);
+    const keys = element.getAttribute('data-i18n').split(/\s/g);
+    const attributes = element.getAttribute('data-i18n-attr')?.split(/\s/g);
 
-    if (text) {
-      element[property] = text;
-    } else {
+    if (keys.length > 1 && keys.length != attributes.length) {
       this.debug(
-        `No translation found for key "${key}" in language "${toLanguage}".`
+        'The attributes "data-i18n" and "data-i18n-attr" must contain the same number of keys.'
       );
+      return;
     }
+
+    keys.forEach((key, index) => {
+      const text = this.getValueFromJSON(key, toLanguage);
+      const attr = attributes ? attributes[index] : 'innerHTML';
+
+      if (text) {
+        element[attr] = text;
+      } else {
+        this.debug(
+          `No translation found for key "${key}" in language "${toLanguage}".`
+        );
+      }
+    });
   }
 
   /**
@@ -105,9 +116,14 @@ class Translator {
       return;
     }
 
-    document
-      .querySelectorAll(this.config.selector)
-      .forEach((element) => this.replace(element, toLanguage));
+    const elements =
+      typeof this.config.selector == 'string'
+        ? document.querySelectorAll(this.config.selector)
+        : this.config.selector;
+
+    if (elements.length > 0) {
+      elements.forEach((element) => this.replace(element, toLanguage));
+    }
 
     if (this.config.persist) {
       localStorage.setItem(this.config.persistKey, toLanguage);
@@ -145,8 +161,8 @@ class Translator {
   /**
    * Add a translation resource to the global cache.
    *
-   * @param {*} language The target language.
-   * @param {*} json The language resource file in JSON.
+   * @param {String} language The target language.
+   * @param {String} json The language resource file in JSON.
    * @return {this}
    */
   add(language, json) {
