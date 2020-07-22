@@ -9,6 +9,7 @@
     "build": "npm-run-all --parallel build:*",
     "build:prod": "webpack --mode production --output-filename translator.min.js",
     "build:dev": "webpack",
+    "dev": "webpack --watch",
     "lint": "eslint src/*.js",
     "format": "prettier src/*.js --write",
     "validate": "npm-run-all --parallel format lint build"
