@@ -1,3 +1,5 @@
+import { logger } from './utils.js';
+
 /**
  * simple-translator
  * A small JavaScript library to translate webpages into different languages.
@@ -13,15 +15,23 @@ class Translator {
    * @param {Object} options
    */
   constructor(options = {}) {
+    this.debug = logger(true);
+
+    if (typeof options != 'object') {
+      this.debug('INVALID_OPTIONS', options);
+      options = {};
+    }
+
     this.languages = new Map();
     this.config = Object.assign(Translator.defaultConfig, options);
+    this.debug = logger(this.config.debug);
 
     if (this.config.registerGlobally) {
       window[this.config.registerGlobally] = this.translateForKey.bind(this);
     }
 
     if (this.config.detectLanguage) {
-      this.detectLanguage();
+      this._detectLanguage();
     }
   }
 
@@ -30,7 +40,7 @@ class Translator {
    * localStorage due to a previous interaction, use it.
    * If no localStorage entry has been found, use the default browser language.
    */
-  detectLanguage() {
+  _detectLanguage() {
     const inMemory = localStorage.getItem(this.config.persistKey);
 
     if (inMemory) {
@@ -46,58 +56,41 @@ class Translator {
 
   /**
    * Get a translated value from a JSON by providing a key. Additionally,
-   * the target language can be specified as second parameter.
+   * the target language can be specified as the second parameter.
    *
-   * @param {String} key The key to translate.
-   * @param {String} toLanguage The (optional) target language.
+   * @param {String} key
+   * @param {String} toLanguage
    * @return {String}
    */
-  getValueFromJSON(key, toLanguage = this.config.defaultLanguage) {
+  _getValueFromJSON(key, toLanguage = this.config.defaultLanguage) {
     const json = this.languages.get(toLanguage);
 
     return key.split('.').reduce((obj, i) => obj[i], json);
   }
 
   /**
-   * Print a message to the browser's console. Only print the message
-   * if the user set the config parameter `debug` to `true`.
-   *
-   * @param {String} message The message to print to the console.
-   */
-  debug(message) {
-    if (this.config.debug) {
-      console.error(message);
-    }
-  }
-
-  /**
    * Replace a given DOM nodes' attribute values (by default innerHTML) with
    * the translated text.
    *
-   * @param {HTMLElement} element The DOM node to translate.
-   * @param {String} toLanguage The target language.
+   * @param {HTMLElement} element
+   * @param {String} toLanguage
    */
-  replace(element, toLanguage) {
+  _replace(element, toLanguage) {
     const keys = element.getAttribute('data-i18n').split(/\s/g);
     const attributes = element.getAttribute('data-i18n-attr')?.split(/\s/g);
 
     if (keys.length > 1 && keys.length != attributes.length) {
-      this.debug(
-        'The attributes "data-i18n" and "data-i18n-attr" must contain the same number of keys.'
-      );
-      return;
+      this.debug('MISMATCHING_ATTRIBUTES', keys, attributes, element);
     }
 
     keys.forEach((key, index) => {
-      const text = this.getValueFromJSON(key, toLanguage);
+      const text = this._getValueFromJSON(key, toLanguage);
       const attr = attributes ? attributes[index] : 'innerHTML';
 
       if (text) {
         element[attr] = text;
       } else {
-        this.debug(
-          `No translation found for key "${key}" in language "${toLanguage}".`
-        );
+        this.debug('TRANSLATION_NOT_FOUND', key, toLanguage);
       }
     });
   }
@@ -106,13 +99,21 @@ class Translator {
    * Translate all DOM nodes that match the given selector into the
    * specified target language.
    *
-   * @param {String} toLanguage The target language.
+   * @param {String} toLanguage The target language
    */
   translatePageTo(toLanguage = this.config.defaultLanguage) {
+    if (typeof toLanguage != 'string') {
+      this.debug('INVALID_PARAM_LANGUAGE', toLanguage);
+      return;
+    }
+
+    if (toLanguage.length == 0) {
+      this.debug('EMPTY_PARAM_LANGUAGE');
+      return;
+    }
+
     if (!this.languages.has(toLanguage)) {
-      this.debug(
-        `No translation for lang key "${toLanguage}" has been specified.`
-      );
+      this.debug('NO_LANGUAGE_REGISTERED', toLanguage);
       return;
     }
 
@@ -122,7 +123,7 @@ class Translator {
         : this.config.selector;
 
     if (elements.length > 0) {
-      elements.forEach((element) => this.replace(element, toLanguage));
+      elements.forEach((element) => this._replace(element, toLanguage));
     }
 
     if (this.config.persist) {
@@ -132,52 +133,86 @@ class Translator {
 
   /**
    * Translate a given key into the specified language if it exists
-   * in the translation file.
+   * in the translation file. If not or if the language hasn't been added yet,
+   * the return value is `null`.
    *
-   * @param {String} key The key from the language file to translate.
-   * @param {String} toLanguage The target language.
-   * @return {String} The translated string.
+   * @param {String} key The key from the language file to translate
+   * @param {String} toLanguage The target language
+   * @return {(String|null)}
    */
   translateForKey(key, toLanguage = this.config.defaultLanguage) {
-    if (!this.languages.has(toLanguage)) {
-      this.debug(
-        `No translation for lang key "${toLanguage}" has been specified.`
-      );
-      return;
+    if (typeof key != 'string') {
+      this.debug('INVALID_PARAM_KEY', key);
+      return null;
     }
 
-    const text = this.getValueFromJSON(key, toLanguage);
+    if (!this.languages.has(toLanguage)) {
+      this.debug('NO_LANGUAGE_REGISTERED', toLanguage);
+      return null;
+    }
+
+    const text = this._getValueFromJSON(key, toLanguage);
 
     if (!text) {
-      this.debug(
-        `No translation found for key "${key}" in language "${toLanguage}".`
-      );
-      return;
+      this.debug('TRANSLATION_NOT_FOUND', key, toLanguage);
+      return null;
     }
 
     return text;
   }
 
   /**
-   * Add a translation resource to the global cache.
+   * Add a translation resource to the Translator object. The language
+   * can then be used to translate single keys or the entire page.
    *
-   * @param {String} language The target language.
-   * @param {String} json The language resource file in JSON.
-   * @return {this}
+   * @param {String} language The target language to add
+   * @param {String} json The language resource file as JSON
+   * @return {Object} Translator instance
    */
   add(language, json) {
+    if (typeof language != 'string') {
+      this.debug('INVALID_PARAM_LANGUAGE', language);
+      return this;
+    }
+
+    if (language.length == 0) {
+      this.debug('EMPTY_PARAM_LANGUAGE');
+      return this;
+    }
+
+    if (typeof json != 'object') {
+      this.debug('INVALID_PARAM_JSON', json);
+      return this;
+    }
+
+    if (Object.keys(json).length == 0) {
+      this.debug('EMPTY_PARAM_JSON');
+      return this;
+    }
+
     this.languages.set(language, json);
 
     return this;
   }
 
   /**
-   * Remove a translation resource from the global cache.
+   * Remove a translation resource from the Translator object. The language
+   * won't be available afterwards.
    *
-   * @param {String} language The target language.
-   * @return {this}
+   * @param {String} language The target language to remove
+   * @return {Object} Translator instance
    */
   remove(language) {
+    if (typeof language != 'string') {
+      this.debug('INVALID_PARAM_LANGUAGE', language);
+      return this;
+    }
+
+    if (language.length == 0) {
+      this.debug('EMPTY_PARAM_LANGUAGE');
+      return this;
+    }
+
     this.languages.delete(language);
 
     return this;
@@ -186,15 +221,20 @@ class Translator {
   /**
    * Fetch a translation resource from the web server. It can either fetch
    * a single resource or an array of resources. After all resources are fetched,
-   * returns a Promise.
+   * return a Promise.
    * If the optional, second parameter is set to true, the fetched translations
-   * will be added to the internal cache.
+   * will be added to the Translator object.
    *
-   * @param {String|Array} sources
-   * @param {Boolean} save
-   * @return {Promise}
+   * @param {String|Array} sources The files to fetch
+   * @param {Boolean} save Save the translation to the Translator object
+   * @return {(Promise|null)}
    */
   fetch(sources, save = true) {
+    if (!Array.isArray(sources) && typeof sources != 'string') {
+      this.debug('INVALID_PARAMETER_SOURCES', sources);
+      return null;
+    }
+
     if (!Array.isArray(sources)) {
       sources = [sources];
     }
@@ -214,9 +254,7 @@ class Translator {
               return response.json();
             }
 
-            this.debug(
-              `Could not fetch "${response.url}": ${response.status} (${response.statusText})`
-            );
+            this.debug('FETCH_ERROR', response);
           })
         )
       )
@@ -243,10 +281,10 @@ class Translator {
   static get defaultConfig() {
     return {
       defaultLanguage: 'en',
+      detectLanguage: true,
       selector: '[data-i18n]',
       debug: false,
       registerGlobally: '__',
-      detectLanguage: true,
       persist: false,
       persistKey: 'preferred_language',
       filesLocation: '/i18n',
