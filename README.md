@@ -16,7 +16,7 @@ import Translator from "./translator.js";
 
 ## Usage
 
-1. In your HTML add the `data-i18n` attribute to the tags that you want to translate (you can customize the attribute, [see here](https://sad.de)):
+1. In your HTML add the `data-i18n` attribute to the tags that you want to translate (you can customize the attribute, [see here](#translating-html-attributes)):
 
 ```html
 <header>
@@ -42,7 +42,7 @@ var translator = new Translator(options);
 translator.load(lang);
 ```
 
-5. In your project's root folder, add a folder `i18n` and put your language files with the `.json` extension inside (you can customize the folder's name, [see here](https://sad.de):
+5. In your project's root folder, add a folder `i18n` and put your language files with the `.json` extension inside (you can customize the folder's name, [see here](#options):
 
 ```
 /your-project-folder
@@ -92,6 +92,21 @@ _simple-translator_ supports the translation of all HTML attributes:
 Use the `data-i18n-attr` attribute on any HTML element to specifiy what you want to translate.
 
 By default, if `data-i18n-attr` is not defined, the `innerHTML` will be translated.
+
+### Multiple attributes
+
+You can also translate more than one attribute at the time by providing a space-separated list:
+
+```html
+<input
+  data-i18n="input.title input.placeholder"
+  data-i18n-attr="title placeholder"
+  title="to be translated..."
+  placeholder="to be translated..."
+/>
+```
+
+If you want to translate two or more attributes, you must also provide a space-separated list of keys to `data-i18n`. If the amount of keys doesn't match the amount of attributes to translate, an error will be displayed in the console.
 
 ### Translating programmatically
 
