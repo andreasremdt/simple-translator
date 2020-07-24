@@ -14,7 +14,7 @@
     "lint": "eslint src/*.js --ignore-path .gitignore",
     "format": "prettier src/*.js --write",
     "test": "jest",
-    "validate": "npm-run-all --parallel format lint test build"
+    "validate": "npm-run-all --parallel format lint test"
   },
   "repository": {
     "type": "git",
@@ -54,7 +54,7 @@
   },
   "husky": {
     "hooks": {
-      "pre-commit": "npm run validate"
+      "pre-commit": "npm-run-all --parallel validate build"
     }
   },
   "jest": {

@@ -1,147 +1,171 @@
-# simple-translator
+# Simple Translator
 
-This script provides a quick and easy way to translate content on your website with only a few lines of JavaScript code.
+> Simple, client-side translation with pure JavaScript.
 
-For a full example, [please look here](https://codesandbox.io/s/i18n-example-ipfeu?fontsize=14).
+## Table of Contents
+
+- [The Problem](#the-problem)
+- [The Solution](#the-solution)
+- [Installation](#installation)
+  - [In the Browser](#in-the-browser)
+  - [Using Node.js or Bundlers](#using-nodejs-or-bundlers)
+- [Examples](#examples)
+  - [Translate HTML in the Browser](#translate-html-in-the-browser)
+  - [Translate Single Strings](#translate-single-strings)
+  - [Fetch JSON from the Server](#fetch-json-from-the-server)
+- [Docs](#docs)
+- [Browser Support](#browser-support)
+- [Issues](#issues)
+
+## The Problem
+
+You want to make your website available in multiple languages. You perhaps already looked for solutions out there and discovered various [services](https://www.i18next.com/) and [libraries](https://github.com/wikimedia/jquery.i18n), and dozens of other smaller packages that offer more or less what you are looking for.
+
+Some of them might be too grand for your purpose. You don't want to install a 100 KB dependency just for a simple translation. Or, perhaps you've found smaller libraries but are missing important features.
+
+## The Solution
+
+`Simple Translator` is a very lightweight (~8 KB minified) solution for translating content with pure JavaScript. It works natively in the browser and in Node.js.
+
+- Translate single strings
+- Translate entire HTML pages
+- Easily fetch JSON resource files (containing your translations)
+- Make use of global helper functions
+- Detect the user's preferred language automatically
 
 ## Installation
 
-Clone this repository or download the `translator.js` file separately and put it into your project folder where all your JavaScript is located.
+### In the Browser
 
-`translator.js` provides a default export which you can import:
+An UMD build is provided via [unpkg](https://unpkg.com). Just paste the following link into your HTML and you're good to go:
 
-```js
-import Translator from "./translator.js";
+```html
+<script
+  src="https://unpkg.com/browse/@andreasremdt/simple-translator@2.0.0/dist/umd/translator.min.js"
+  defer
+></script>
 ```
 
-## Usage
+### Using Node.js or Bundlers
 
-1. In your HTML add the `data-i18n` attribute to the tags that you want to translate (you can customize the attribute, [see here](#translating-html-attributes)):
+This package is distributed via [npm](https://npmjs.com) and should be installed as one of your project's dependencies:
+
+```
+npm i @andreasremdt/simple-translator
+```
+
+Or using [yarn](https://yarnpkg.com/):
+
+```
+yarn add @andreasremdt/simple-translator
+```
+
+## Examples
+
+### Translate HTML in the Browser
 
 ```html
 <header>
   <h1 data-i18n="header.title">Translate me</h1>
+  <p data-i18n="header.subtitle">This subtitle is getting translated as well</p>
 </header>
+
+<!-- Load the translator either from a CDN or locally -->
+<script
+  src="https://unpkg.com/browse/@andreasremdt/simple-translator@2.0.0/dist/umd/translator.min.js"
+  defer
+></script>
+<script defer>
+  // Provide your translations as JSON / JS objects
+  var germanTranslation = {
+    header: {
+      title: 'Eine Überschrift',
+      subtitle: 'Dieser Untertitel ist nur für Demozwecke',
+    },
+  };
+
+  // Create a new instance of the translator
+  // You can optionally pass options
+  var translator = new Translator();
+
+  // Add the language to the translator and translate the page
+  translator.add('de', germanTranslation).translatePageTo('de');
+</script>
 ```
 
-2. Import the translator script into your project's source code:
+### Translate Single Strings
 
 ```js
-import Translator from "./translator.js";
+// Depending on your environment, you can use CommonJS
+var Translator = require('@andreasremdt/simple-translator');
+
+// or EcmaScript modules
+import Translator from '@andreasremdt/simple-translator';
+
+// Provide your translations as JSON / JS objects
+var germanTranslation = {
+  header: {
+    title: 'Eine Überschrift',
+    subtitle: 'Dieser Untertitel ist nur für Demozwecke',
+  },
+};
+
+// You can optionally pass options
+var translator = new Translator();
+
+// Add the language to the translator
+translator.add('de', germanTranslation);
+
+// Provide single keys and the target language
+translator.translateForKey('header.title', 'de');
+translator.translateForKey('header.subtitle', 'de');
 ```
 
-3. Initialize the `Translator` class:
+### Fetch JSON from the Server
 
-```js
-var translator = new Translator(options);
-```
-
-4. Call the `load` method whenever you need it:
-
-```js
-translator.load(lang);
-```
-
-5. In your project's root folder, add a folder `i18n` and put your language files with the `.json` extension inside (you can customize the folder's name, [see here](#options):
-
-```
-/your-project-folder
-|–– i18n/
-|––|–– en.json
-|––|–– de.json
-|––|–– es.json
-```
-
-**en.json:**
+`i18n/de.json`:
 
 ```json
-{
-  "header": {
-    "title": "English title"
-  }
+"header": {
+  "title": "Eine Überschrift",
+  "subtitle": "Dieser Untertitel ist nur für Demozwecke",
 }
 ```
 
-**de.json:**
+`i18n/en.json`:
 
 ```json
-{
-  "header": {
-    "title": "Deutscher Titel"
-  }
+"header": {
+  "title": "Some Nice Title",
+  "subtitle": "This Subtitle is Going to Look Good",
 }
 ```
 
-For an advanced example, [please look here](https://codesandbox.io/s/i18n-example-ipfeu?fontsize=14).
-
-### Translating HTML attributes
-
-Sometimes you might not want to translate the element text, but rather one of its attributes, such as the `title` or `placeholder`. As of version 1.1.0,
-_simple-translator_ supports the translation of all HTML attributes:
-
-```html
-<button
-  data-i18n="header.button_label"
-  data-i18n-attr="title"
-  title="to be translated..."
->
-  Click me
-</button>
-```
-
-Use the `data-i18n-attr` attribute on any HTML element to specifiy what you want to translate.
-
-By default, if `data-i18n-attr` is not defined, the `innerHTML` will be translated.
-
-### Multiple attributes
-
-You can also translate more than one attribute at the time by providing a space-separated list:
-
-```html
-<input
-  data-i18n="input.title input.placeholder"
-  data-i18n-attr="title placeholder"
-  title="to be translated..."
-  placeholder="to be translated..."
-/>
-```
-
-If you want to translate two or more attributes, you must also provide a space-separated list of keys to `data-i18n`. If the amount of keys doesn't match the amount of attributes to translate, an error will be displayed in the console.
-
-### Translating programmatically
-
-Alternatively, you can translate a single, given key via the method `getTranslationByKey(lang, key)`. The first argument should be a valid language string like "en" or "de", the second argument should be a key from your translation files, such as "header.title".
+`index.js`:
 
 ```js
-translator
-  .getTranslationByKey("en", "header.title")
-  .then((translation) => console.log(translation));
-// --> prints "English title"
-```
+import Translator from '@andreasremdt/simple-translator';
 
-## Options
-
-When initializing `Translator`, you can pass an object with options:
-
-```js
+// The option `filesLocation` is "/i18n" by default, but you can
+// override it
 var translator = new Translator({
-  persist: true,
-  languages: ["de", "en", "es"],
-  defaultLanguage: "en",
-  detectLanguage: true,
-  filesLocation: "/i18n",
+  filesLocation: '/i18n',
+});
+
+// This will fetch "/i18n/de.json" and "/i18n/en.json"
+translator.fetch(['de', 'en']).then(() => {
+  // You now have both languages available to you
+  translator.translatePageTo('de');
 });
 ```
 
-| Option          | Type      | Default   | Description                                                                                                                     |
-| --------------- | --------- | --------- | ------------------------------------------------------------------------------------------------------------------------------- |
-| persist         | `Boolean` | `true`    | Whether or not the last selected language should be stored in the browser's localStorage.                                       |
-| languages       | `Array`   | `["en"]`  | The available languages. For each language, a JSON file must be located in the localization folder.                             |
-| defaultLanguage | `String`  | `""`      | The default language to load. Also serves as a fallback language in case the key wasn't found in the original translation file. |
-| detectLanguage  | `Boolean` | `true`    | Whether or not the script should try to determine the user's desired language. This will override `defaultLanguage`.            |
-| filesLocation   | `String`  | `"/i18n"` | The absolute path (from your project's root) to your localization files.                                                        |
+## Docs
 
-## Browser support
+For more thorough documentation follow [this link](https://some-url.com).
+
+## Browser Support
+
+`Simple Translator` already comes minified and transpiled and should work in most browsers. The following browsers are tested:
 
 - Edge <= 16
 - Firefox <= 60
