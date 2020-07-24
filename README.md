@@ -16,7 +16,7 @@ import Translator from "./translator.js";
 
 ## Usage
 
-1. In your HTML add the `data-i18n` attribute to the tags that you want to translate (you can customize the attribute, [see here](https://sad.de)):
+1. In your HTML add the `data-i18n` attribute to the tags that you want to translate (you can customize the attribute, [see here](#translating-html-attributes)):
 
 ```html
 <header>
@@ -42,7 +42,7 @@ var translator = new Translator(options);
 translator.load(lang);
 ```
 
-5. In your project's root folder, add a folder `i18n` and put your language files with the `.json` extension inside (you can customize the folder's name, [see here](https://sad.de):
+5. In your project's root folder, add a folder `i18n` and put your language files with the `.json` extension inside (you can customize the folder's name, [see here](#options):
 
 ```
 /your-project-folder
