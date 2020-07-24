@@ -27,4 +27,4 @@ jobs:
     - name: Install dependencies
       run: npm install
     - name: Build and test library
-    - run: npm run validate --if-present
+      run: npm run validate --if-present
