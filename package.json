@@ -11,7 +11,7 @@
     "lint": "eslint src/*.js --ignore-path .gitignore",
     "format": "prettier src/*.js --write",
     "test": "jest",
-    "validate": "npm-run-all --parallel format lint build"
+    "validate": "npm-run-all --parallel format lint test build"
   },
   "repository": {
     "type": "git",
@@ -53,5 +53,10 @@
     "hooks": {
       "pre-commit": "npm run validate"
     }
+  },
+  "jest": {
+    "collectCoverageFrom": [
+      "src/*.js"
+    ]
   }
 }

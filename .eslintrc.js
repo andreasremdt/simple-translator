@@ -3,6 +3,7 @@ module.exports = {
     browser: true,
     es2020: true,
     node: true,
+    jest: true,
   },
   extends: ['google', 'eslint:recommended', 'prettier'],
   parserOptions: {
