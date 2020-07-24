@@ -1,5 +1,5 @@
 "use strict";
-
+console.log('testing')
 class Translator {
   constructor(options = {}) {
     this._options = Object.assign({}, this.defaultConfig, options);
