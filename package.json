@@ -2,8 +2,11 @@
   "name": "@andreasremdt/simple-translator",
   "version": "2.0.0",
   "description": "Simple client-side translation with pure JavaScript.",
-  "main": "dist/cjs/translator.js",
-  "module": "dist/esm/translator.js",
+  "main": "dist/cjs/translator.min.js",
+  "module": "dist/esm/translator.min.js",
+  "publishConfig": {
+    "access": "public"
+  },
   "scripts": {
     "prebuild": "rm -rf dist/",
     "build": "rollup --config",
