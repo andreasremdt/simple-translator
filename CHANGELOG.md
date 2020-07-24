@@ -3,6 +3,50 @@
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.0.0] - 2020-08-01
+
+### Breaking changes
+
+- This release is a complete rewrite of the codebase.
+- The methods `load()` and `getTranslationByKey()` have been removed in favor of a new API. Use `fetch()`, `translateForKey()`, and `translatePageTo()` instead.
+- For more information, open the [migration guide](https://migrate).
+
+### Added
+
+- Added a config option `registerGlobally` that, if specified, registers a global helper with the same name as the given value for easier translations.
+- Added a config option `persistKey` that specifies the name of the localStorage key.
+- Added a config option `debug` that, if set to `true`, prints useful error messages.
+- Added `fetch()` for easier JSON fetching.
+- Added `add()` to push new languages to the translator.
+- Added `remove()` to remove languages from the translator.
+- Added `translateForKey()` and `translatePageTo()` for easier translation.
+- Transpiled and minified UMD, ESM and CJS builds available via [unpkg](https://unpkg.com/browse/@andreasremdt/simple-translator@2.0.0/) and [npm](https://www.npmjs.com/package/@andreasremdt/simple-translator).
+- New build system for easier packaging and testing.
+
+### Changed
+
+- The [documentation](https://sdfsd) has been updated and improved.
+
+### Removed
+
+- The option `languages` has been removed.
+
+### Dependencies
+
+- Install `@babel/core@7.10.5`,
+- Install `@babel/plugin-proposal-optional-chaining@7.10.4`,
+- Install `@babel/plugin-transform-modules-commonjs@7.10.4`,
+- Install `@babel/preset-env@7.10.4`,
+- Install `@rollup/plugin-babel@5.1.0`,
+- Install `eslint-config-google@0.14.0`,
+- Install `eslint-config-prettier@6.11.0`,
+- Install `husky@4.2.5`,
+- Install `jest@26.1.0`,
+- Install `npm-run-all@4.1.5`,
+- Install `prettier@2.0.5`,
+- Install `rollup@2.22.2`,
+- Install `rollup-plugin-terser@6.1.0`
+
 ## [1.2.0] - 2020-07-21
 
 ### Added
@@ -13,8 +57,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
-- `getTranslationByKey` uses the fallback language when provided
-- Update the documentation
+- `getTranslationByKey` uses the fallback language when provided.
+- Update the documentation.
 
 ## [1.1.0] - 2020-04-04
 
