@@ -17,7 +17,7 @@ class Translator {
   constructor(options = {}) {
     this.debug = logger(true);
 
-    if (typeof options != 'object') {
+    if (typeof options != 'object' || Array.isArray(options)) {
       this.debug('INVALID_OPTIONS', options);
       options = {};
     }
@@ -62,10 +62,10 @@ class Translator {
    * @param {String} toLanguage
    * @return {String}
    */
-  _getValueFromJSON(key, toLanguage = this.config.defaultLanguage) {
+  _getValueFromJSON(key, toLanguage) {
     const json = this.languages.get(toLanguage);
 
-    return key.split('.').reduce((obj, i) => obj[i], json);
+    return key.split('.').reduce((obj, i) => (obj ? obj[i] : null), json);
   }
 
   /**
@@ -76,10 +76,10 @@ class Translator {
    * @param {String} toLanguage
    */
   _replace(element, toLanguage) {
-    const keys = element.getAttribute('data-i18n').split(/\s/g);
-    const attributes = element.getAttribute('data-i18n-attr')?.split(/\s/g);
+    const keys = element.getAttribute('data-i18n')?.split(/\s/g);
+    const attributes = element?.getAttribute('data-i18n-attr')?.split(/\s/g);
 
-    if (keys.length > 1 && keys.length != attributes.length) {
+    if (attributes && keys.length != attributes.length) {
       this.debug('MISMATCHING_ATTRIBUTES', keys, attributes, element);
     }
 
@@ -88,7 +88,11 @@ class Translator {
       const attr = attributes ? attributes[index] : 'innerHTML';
 
       if (text) {
-        element[attr] = text;
+        if (attr == 'innerHTML') {
+          element[attr] = text;
+        } else {
+          element.setAttribute(attr, text);
+        }
       } else {
         this.debug('TRANSLATION_NOT_FOUND', key, toLanguage);
       }
@@ -122,8 +126,10 @@ class Translator {
         ? document.querySelectorAll(this.config.selector)
         : this.config.selector;
 
-    if (elements.length > 0) {
+    if (elements.length && elements.length > 0) {
       elements.forEach((element) => this._replace(element, toLanguage));
+    } else if (elements.length == undefined) {
+      this._replace(elements, toLanguage);
     }
 
     if (this.config.persist) {
@@ -180,7 +186,7 @@ class Translator {
       return this;
     }
 
-    if (typeof json != 'object') {
+    if (Array.isArray(json) || typeof json != 'object') {
       this.debug('INVALID_PARAM_JSON', json);
       return this;
     }
@@ -241,9 +247,9 @@ class Translator {
 
     const urls = sources.map((source) => {
       const filename = source.replace(/\.json$/, '').replace(/^\//, '');
-      const config = this.config.filesLocation.replace(/\/$/, '');
+      const path = this.config.filesLocation.replace(/\/$/, '');
 
-      return `${config}/${filename}.json`;
+      return `${path}/${filename}.json`;
     });
 
     return Promise.all(urls.map((url) => fetch(url)))

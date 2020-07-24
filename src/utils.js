@@ -50,6 +50,8 @@ This error happened in the method \`${method}\` from: \`${filepath}\`.
 
 If you don't want to see these error messages, turn off debugging by passing \`{ debug: false }\` to the constructor.
 
+Error code: ${code}
+
 Check out the documentation for more details about the API:
 https://github.com/andreasremdt/simple-translator#usage
         `);
