@@ -9,27 +9,30 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - This release is a complete rewrite of the codebase.
 - The methods `load()` and `getTranslationByKey()` have been removed in favor of a new API. Use `fetch()`, `translateForKey()`, and `translatePageTo()` instead.
-- For more information, open the [migration guide](https://migrate).
+- The config option `languages` has been removed.
+- For more documentation on the new API, see the [Usage section](https://github.com/andreasremdt/simple-translator#usage) or the [API Reference](https://github.com/andreasremdt/simple-translator#api-reference).
 
 ### Added
 
-- Added a config option `registerGlobally` that, if specified, registers a global helper with the same name as the given value for easier translations.
+- Added a config option `registerGlobally` that, if specified, registers a global helper with the same name as the given value for easier access.
 - Added a config option `persistKey` that specifies the name of the localStorage key.
 - Added a config option `debug` that, if set to `true`, prints useful error messages.
 - Added `fetch()` for easier JSON fetching.
-- Added `add()` to push new languages to the translator.
+- Added `add()` to register new languages to the translator.
 - Added `remove()` to remove languages from the translator.
 - Added `translateForKey()` and `translatePageTo()` for easier translation.
-- Transpiled and minified UMD, ESM and CJS builds available via [unpkg](https://unpkg.com/browse/@andreasremdt/simple-translator@2.0.0/) and [npm](https://www.npmjs.com/package/@andreasremdt/simple-translator).
+- Transpiled and minified UMD, ESM and CJS builds available via [unpkg](https://unpkg.com/@andreasremdt/simple-translator@2.0.0/dist/umd/translator.min.js) and [npm](https://www.npmjs.com/package/@andreasremdt/simple-translator).
 - New build system for easier packaging and testing.
 
 ### Changed
 
-- The [documentation](https://sdfsd) has been updated and improved.
+- The [documentation](https://github.com/andreasremdt/simple-translator/#readme) has been updated and improved.
 
 ### Removed
 
 - The option `languages` has been removed.
+- The method `load()` has been removed.
+- The method `getTranslationByKey()` has been removed.
 
 ### Dependencies
 
