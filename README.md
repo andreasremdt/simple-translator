@@ -18,6 +18,14 @@
   - [ Translating HTML Attributes](#translating-html-attributes)
   - [Translating Programmatically](#translating-programmatically)
 - [Configuration](#configuration)
+- [API Reference](#api-reference)
+  - [new Translator(options)](#new-translatorobject-options)
+  - _instance_
+    - [translateForKey(key, language)](#user-content-translateforkeystring-key-string-language)
+    - [translatePageTo(language)](#user-content-translatepagetostring-language)
+    - [add(language, translation)](#user-content-addstring-language-object-translation)
+    - [remove(language)](#user-content-removestring-language)
+    - [fetch(languageFiles, save)](#user-content-fetchstringarray-languagefiles-boolean-save)
 - [Browser Support](#browser-support)
 - [Issues](#issues)
 
@@ -45,7 +53,7 @@ A UMD build is available via [unpkg](https://unpkg.com). Just paste the followin
 
 ```html
 <script
-  src="https://unpkg.com/browse/@andreasremdt/simple-translator@2.0.0/dist/umd/translator.min.js"
+  src="https://unpkg.com/@andreasremdt/simple-translator@2.0.0/dist/umd/translator.min.js"
   defer
 ></script>
 ```
@@ -66,6 +74,8 @@ yarn add @andreasremdt/simple-translator
 
 ## Examples
 
+For a full demo in the browser, open this [CodeSandbox link](https://codesandbox.io/s/simple-translator-demo-e33ye?file=/src/index.js).
+
 ### Translate HTML in the Browser
 
 ```html
@@ -76,7 +86,7 @@ yarn add @andreasremdt/simple-translator
 
 <!-- Load the translator either from a CDN or locally -->
 <script
-  src="https://unpkg.com/browse/@andreasremdt/simple-translator@2.0.0/dist/umd/translator.min.js"
+  src="https://unpkg.com/@andreasremdt/simple-translator@2.0.0/dist/umd/translator.min.js"
   defer
 ></script>
 <script defer>
@@ -286,10 +296,108 @@ var translator = new Translator({
 | detectLanguage   | `Boolean`        | `true`                 | If set to `true`, it tries to determine the user's desired language based on the browser settings.                                                                                                          |
 | selector         | `String`         | `'[data-i18n]'`        | Elements that match this selector will be translated. It can be any valid [element selector](https://developer.mozilla.org/en-US/docs/Web/API/Document_object_model/Locating_DOM_elements_using_selectors). |
 | debug            | `Boolean`        | `false`                | When set to `true`, helpful logs will be printed to the console. Valuable for debugging and problem-solving.                                                                                                |
-| registerGlobally | `String|Boolean` | `'__'`                 | When set to a `String`, it will create a global helper with the same name. When set to `false`, it won't register anything.                                                                                 |
+| registerGlobally | `String,Boolean` | `'__'`                 | When set to a `String`, it will create a global helper with the same name. When set to `false`, it won't register anything.                                                                                 |
 | persist          | `Boolean`        | `false`                | When set to `true`, the last language that was used is saved to localStorage.                                                                                                                               |
 | persistKey       | `String`         | `'preferred_language'` | Only valid when `persist` is set to `true`. This is the name of the key with which the last used language is stored in localStorage.                                                                        |
 | filesLocation    | `String`         | `'/i18n'`              | The absolute path (from your project's root) to your localization files.                                                                                                                                    |
+
+## API Reference
+
+### `new Translator(Object?: options)`
+
+Creates a new instance of the translator. You can define multiple instances, although this should not be a use-case.
+
+Only accepts one parameter, a JavaScript `Object` with a [custom config](#configuration).
+
+```js
+import Translator from '@andreasremdt/simple-translator';
+
+var translator = new Translator();
+// or...
+var translator = new Translator({
+  ...
+});
+```
+
+### `translateForKey(String: key, String?: language)`
+
+Translates a single translation string into the desired language. If no second language parameter is provided, the `defaultLanguage` is used.
+
+If the option `detectLanguage` is set to `true`, then `Simple Translator` will detect the browser's default language. Otherwise it will use the default language.
+
+```js
+var translator = new Translator({
+  defaultLanguage: 'de',
+});
+
+translator.translateForKey('header.title', 'en');
+// -> translates to English (en)
+translator.translateForKey('header.title');
+// -> translates to German (de)
+```
+
+### `translatePageTo(String?: language)`
+
+Translates all DOM elements that match the selector (`'[data-i18n]'` by default) into the specified language. If no language is passed into the method, the `defaultLanguage` will be used.
+
+```js
+var translator = new Translator({
+  defaultLanguage: 'de',
+});
+
+translator.translatePageTo('en');
+// -> translates the page to English (en)
+translator.translatePageTo();
+// -> translates the page to German (de)
+```
+
+### `add(String: language, Object: translation)`
+
+Registers a new language to the translator. It must receive the language as the first and an object, containing the translation, as the second parameter.
+
+The method `add()` returns the instance of `Simple Translator`, meaning that it can be chained.
+
+```js
+translator
+  .add('de', {...})
+  .add('es', {...})
+  .translatePageTo(...);
+```
+
+### `remove(String: language)`
+
+Removes a registered language from the translator. It accepts only the language code as parameter.
+
+The method `remove()` returns the instance of `Simple Translator`, meaning that it can be chained.
+
+```js
+translator.remove('de');
+```
+
+### `fetch(String|Array: languageFiles, Boolean?: save)`
+
+Fetches either one or multiple JSON files from your project by utilizing the [Fetch API](https://developer.mozilla.org/en-US/docs/Web/API/Fetch_API). By default, fetched languages are also registered to the translator instance, making them available for use. If you just want to fetch the JSON content, pass `false` as an optional, second parameter.
+
+You don't have to pass the entire file path nor the file extension (although you could). The folder will be determined by the `filesLocation` option. It's sufficient to just pass the language code.
+
+```js
+var translator = new Translator({
+  filesLocation: '/i18n'
+});
+
+// Fetches /i18n/de.json
+translator.fetch('de').then((json) => {
+  console.log(json);
+});
+
+// Fetches "/i18n/de.json" and "/i18n/en.json"
+translator.fetch(['de', 'en']).then(...);
+
+// async/await
+// The second parameter is set to `false`, so the fetched language
+// will not be registered.
+await translator.fetch('de', false);
+```
 
 ## Browser Support
 
