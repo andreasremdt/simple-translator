@@ -17,7 +17,7 @@ describe('logger()', () => {
     expect(consoleSpy).not.toHaveBeenCalled();
   });
 
-  it('should log a comprehensive error', () => {
+  it('should log a comprehensive error message', () => {
     logger(true)('INVALID_PARAM_LANGUAGE');
 
     expect(consoleSpy).toHaveBeenCalledTimes(1);

@@ -2,6 +2,10 @@
 
 > Simple, client-side translation with pure JavaScript.
 
+![Node.js CI](https://github.com/andreasremdt/simple-translator/workflows/Node.js%20CI/badge.svg)
+![NPM](https://img.shields.io/npm/l/@andreasremdt/simple-translator)
+![npm (scoped)](https://img.shields.io/npm/v/@andreasremdt/simple-translator)
+
 ## Table of Contents
 
 - [The Problem](#the-problem)
@@ -179,6 +183,8 @@ translator.fetch(['de', 'en']).then(() => {
 
 ### Translating HTML Content
 
+> Note that this feature is only available in a browser environment and will throw an error in Node.js.
+
 In your HTML, add the `data-i18n` attribute to all DOM nodes that you want to translate. The attribute holds the key to your translation in dot syntax as if you were accessing a JavaScript object. The key resembles the structure of your translation files.
 
 ```html
@@ -337,6 +343,8 @@ translator.translateForKey('header.title');
 ```
 
 ### `translatePageTo(String?: language)`
+
+> Note that this method is only available in the browser and will throw an error in Node.js.
 
 Translates all DOM elements that match the selector (`'[data-i18n]'` by default) into the specified language. If no language is passed into the method, the `defaultLanguage` will be used.
 

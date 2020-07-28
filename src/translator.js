@@ -24,15 +24,48 @@ class Translator {
 
     this.languages = new Map();
     this.config = Object.assign(Translator.defaultConfig, options);
-    this.debug = logger(this.config.debug);
 
-    if (this.config.registerGlobally) {
-      window[this.config.registerGlobally] = this.translateForKey.bind(this);
+    const { debug, registerGlobally, detectLanguage } = this.config;
+
+    this.debug = logger(debug);
+
+    if (registerGlobally) {
+      this._globalObject[registerGlobally] = this.translateForKey.bind(this);
     }
 
-    if (this.config.detectLanguage) {
+    if (detectLanguage && this._env == 'browser') {
       this._detectLanguage();
     }
+  }
+
+  /**
+   * Return the global object, depending on the environment.
+   * If the script is executed in a browser, return the window object,
+   * otherwise, in Node.js, return the global object.
+   *
+   * @return {Object}
+   */
+  get _globalObject() {
+    if (this._env == 'browser') {
+      return window;
+    }
+
+    return global;
+  }
+
+  /**
+   * Check and return the environment in which the script is executed.
+   *
+   * @return {String} The environment
+   */
+  get _env() {
+    if (typeof window != 'undefined') {
+      return 'browser';
+    } else if (typeof module !== 'undefined' && module.exports) {
+      return 'node';
+    }
+
+    return 'browser';
   }
 
   /**
@@ -106,6 +139,11 @@ class Translator {
    * @param {String} toLanguage The target language
    */
   translatePageTo(toLanguage = this.config.defaultLanguage) {
+    if (this._env == 'node') {
+      this.debug('INVALID_ENVIRONMENT');
+      return;
+    }
+
     if (typeof toLanguage != 'string') {
       this.debug('INVALID_PARAM_LANGUAGE', toLanguage);
       return;
@@ -252,30 +290,52 @@ class Translator {
       return `${path}/${filename}.json`;
     });
 
-    return Promise.all(urls.map((url) => fetch(url)))
-      .then((responses) =>
-        Promise.all(
-          responses.map((response) => {
-            if (response.ok) {
-              return response.json();
+    if (this._env == 'browser') {
+      return Promise.all(urls.map((url) => fetch(url)))
+        .then((responses) =>
+          Promise.all(
+            responses.map((response) => {
+              if (response.ok) {
+                return response.json();
+              }
+
+              this.debug('FETCH_ERROR', response);
+            })
+          )
+        )
+        .then((languageFiles) => {
+          // If a file could not be fetched, it will be `undefined` and filtered out.
+          languageFiles = languageFiles.filter((file) => file);
+
+          if (save) {
+            languageFiles.forEach((file, index) => {
+              this.add(sources[index], file);
+            });
+          }
+
+          return languageFiles.length > 1 ? languageFiles : languageFiles[0];
+        });
+    } else if (this._env == 'node') {
+      return new Promise((resolve) => {
+        const languageFiles = [];
+
+        urls.forEach((url, index) => {
+          try {
+            const json = require(process.cwd() + url);
+
+            if (save) {
+              this.add(sources[index], json);
             }
 
-            this.debug('FETCH_ERROR', response);
-          })
-        )
-      )
-      .then((languageFiles) => {
-        // If a file could not be fetched, it will be `undefined` and filtered out.
-        languageFiles = languageFiles.filter((file) => file);
+            languageFiles.push(json);
+          } catch (err) {
+            this.debug('MODULE_NOT_FOUND', err.message);
+          }
+        });
 
-        if (save) {
-          languageFiles.forEach((file, index) => {
-            this.add(sources[index], file);
-          });
-        }
-
-        return languageFiles.length > 1 ? languageFiles : languageFiles[0];
+        resolve(languageFiles.length > 1 ? languageFiles : languageFiles[0]);
       });
+    }
   }
 
   /**

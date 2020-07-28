@@ -17,6 +17,9 @@ const CONSOLE_MESSAGES = {
     `Invalid parameter for \`sources\` provided. Expected either a string or an array, but got ${typeof param}.`,
   FETCH_ERROR: (response) =>
     `Could not fetch "${response.url}": ${response.status} (${response.statusText})`,
+  INVALID_ENVIRONMENT: () =>
+    `You are trying to execute the method \`translatePageTo()\`, which is only available in the browser. Your environment is most likely Node.js`,
+  MODULE_NOT_FOUND: (message) => message,
   MISMATCHING_ATTRIBUTES: (keys, attributes, element) =>
     `The attributes "data-i18n" and "data-i18n-attr" must contain the same number of keys.
 
