@@ -8,21 +8,21 @@
 
 ## Table of Contents
 
-- [The Problem](#the-problem)
-- [The Solution](#the-solution)
+- [The problem](#the-problem)
+- [The solution](#the-solution)
 - [Installation](#installation)
-  - [In the Browser](#in-the-browser)
-  - [Using Node.js or Bundlers](#using-nodejs-or-bundlers)
+  - [In the browser](#in-the-browser)
+  - [Using Node.js or bundlers](#using-nodejs-or-bundlers)
 - [Examples](#examples)
-  - [Translate HTML in the Browser](#translate-html-in-the-browser)
-  - [Translate Single Strings](#translate-single-strings)
-  - [Fetch JSON from the Server](#fetch-json-from-the-server)
+  - [Translate HTML in the browser](#translate-html-in-the-browser)
+  - [Translate single strings](#translate-single-strings)
+  - [Fetch JSON from the server](#fetch-json-from-the-server)
 - [Usage](#usage)
-  - [Translating HTML Content](#translating-html-content)
-  - [ Translating HTML Attributes](#translating-html-attributes)
-  - [Translating Programmatically](#translating-programmatically)
+  - [Translating HTML content](#translating-html-content)
+  - [ Translating HTML attributes](#translating-html-attributes)
+  - [Translating programmatically](#translating-programmatically)
 - [Configuration](#configuration)
-- [API Reference](#api-reference)
+- [API reference](#api-reference)
   - [new Translator(options)](#new-translatorobject-options)
   - _instance_
     - [translateForKey(key, language)](#user-content-translateforkeystring-key-string-language)
@@ -31,18 +31,18 @@
     - [remove(language)](#user-content-removestring-language)
     - [fetch(languageFiles, save)](#user-content-fetchstringarray-languagefiles-boolean-save)
     - [get currentLanguage](#user-content-get-currentlanguage)
-- [Browser Support](#browser-support)
+- [Browser support](#browser-support)
 - [Issues](#issues)
 
-## The Problem
+## The problem
 
 You want to make your website available in multiple languages. You perhaps already looked for solutions out there and discovered various [services](https://www.i18next.com/) and [libraries](https://github.com/wikimedia/jquery.i18n), and dozens of other smaller packages that offer more or less what you are looking for.
 
 Some of them might be too grand for your purpose. You don't want to install a 100 KB dependency just for a simple translation. Or, perhaps you've found smaller libraries but are missing essential features.
 
-## The Solution
+## The solution
 
-`Simple Translator` is a very lightweight (~8 KB minified) solution for translating content with pure JavaScript. It works natively in the browser and Node.js.
+`Simple Translator` is a very lightweight (~9 KB minified) solution for translating content with pure JavaScript. It works natively in the browser and Node.js.
 
 - Translate single strings
 - Translate entire HTML pages
@@ -52,7 +52,7 @@ Some of them might be too grand for your purpose. You don't want to install a 10
 
 ## Installation
 
-### In the Browser
+### In the browser
 
 A UMD build is available via [unpkg](https://unpkg.com). Just paste the following link into your HTML, and you're good to go:
 
@@ -63,7 +63,7 @@ A UMD build is available via [unpkg](https://unpkg.com). Just paste the followin
 ></script>
 ```
 
-### Using Node.js or Bundlers
+### Using Node.js or bundlers
 
 This package is distributed via [npm](https://npmjs.com). It's best to install it as one of your project's dependencies:
 
@@ -81,7 +81,7 @@ yarn add @andreasremdt/simple-translator
 
 For a full demo in the browser, open this [CodeSandbox link](https://codesandbox.io/s/simple-translator-demo-e33ye?file=/src/index.js).
 
-### Translate HTML in the Browser
+### Translate HTML in the browser
 
 ```html
 <header>
@@ -112,7 +112,7 @@ For a full demo in the browser, open this [CodeSandbox link](https://codesandbox
 </script>
 ```
 
-### Translate Single Strings
+### Translate single strings
 
 ```js
 // Depending on your environment, you can use CommonJS
@@ -140,7 +140,7 @@ translator.translateForKey('header.title', 'de');
 translator.translateForKey('header.subtitle', 'de');
 ```
 
-### Fetch JSON from the Server
+### Fetch JSON from the server
 
 `i18n/de.json`:
 
@@ -182,7 +182,7 @@ translator.fetch(['de', 'en']).then(() => {
 
 `Simple Translator` can be used to translate entire websites or programmatically via the API in the browser or Node.js.
 
-### Translating HTML Content
+### Translating HTML content
 
 > Note that this feature is only available in a browser environment and will throw an error in Node.js.
 
@@ -244,7 +244,7 @@ translator.translatePageTo(); // Uses the default language
 translator.translatePageTo('de'); // Uses German
 ```
 
-### Translating HTML Attributes
+### Translating HTML attributes
 
 You can translate the text content of a DOM element (it's `innerHTML`) or any other attribute, such as `title` or `placeholder`. For that, pass `data-i18n-attr` and a space-separated list of attributes to the target DOM node:
 
@@ -261,7 +261,7 @@ You can translate the text content of a DOM element (it's `innerHTML`) or any ot
 
 By default, if `data-i18n-attr` is not defined, the innerHTML will be translated.
 
-### Translating Programmatically
+### Translating programmatically
 
 Instead of translating the entire page or some DOM nodes, you can translate a single, given key via `translateForKey()`. The first argument should be a key from your translation sources, such as "header.title", and the second argument should be the target language like "en" or "de". Note that the language must have been registered before calling this method.
 
@@ -308,13 +308,13 @@ var translator = new Translator({
 | persistKey       | `String`         | `'preferred_language'` | Only valid when `persist` is set to `true`. This is the name of the key with which the last used language is stored in localStorage.                                                                        |
 | filesLocation    | `String`         | `'/i18n'`              | The absolute path (from your project's root) to your localization files.                                                                                                                                    |
 
-## API Reference
+## API reference
 
 ### `new Translator(Object?: options)`
 
 Creates a new instance of the translator. You can define multiple instances, although this should not be a use-case.
 
-Only accepts one parameter, a JavaScript `Object` with a [custom config](#configuration).
+Only accepts one parameter, a JavaScript `Object`, with a [custom config](#configuration).
 
 ```js
 import Translator from '@andreasremdt/simple-translator';
@@ -330,9 +330,9 @@ var translator = new Translator({
 
 Translates a single translation string into the desired language. If no second language parameter is provided, then:
 
-- It utilizes the last used language (which is accessible via the getter `currentLanguage`, but only after calling `translatePageTo()` at least once.
-- If no last used language is set and the `detectLanguage` option is enabled, it uses the browser's preferred language.
-- If `detectLanguage` is disabled, it will fallback to the `defaultLanguage` option which by default is `en`.
+- It utilizes the last used language (accessible via the getter `currentLanguage`, but only after calling `translatePageTo()` at least once.
+- If no previously used language was set and the `detectLanguage` option is enabled, it uses the browser's preferred language.
+- If `detectLanguage` is disabled, it will fall back to the `defaultLanguage` option, which by default is `en`.
 
 ```js
 var translator = new Translator({
@@ -379,7 +379,7 @@ translator
 
 ### `remove(String: language)`
 
-Removes a registered language from the translator. It accepts only the language code as parameter.
+Removes a registered language from the translator. It accepts only the language code as a parameter.
 
 The method `remove()` returns the instance of `Simple Translator`, meaning that it can be chained.
 
@@ -389,9 +389,9 @@ translator.remove('de');
 
 ### `fetch(String|Array: languageFiles, Boolean?: save)`
 
-Fetches either one or multiple JSON files from your project by utilizing the [Fetch API](https://developer.mozilla.org/en-US/docs/Web/API/Fetch_API). By default, fetched languages are also registered to the translator instance, making them available for use. If you just want to fetch the JSON content, pass `false` as an optional, second parameter.
+Fetches either one or multiple JSON files from your project by utilizing the [Fetch API](https://developer.mozilla.org/en-US/docs/Web/API/Fetch_API). By default, fetched languages are also registered to the translator instance, making them available for use. If you just want to get the JSON content, pass `false` as an optional, second parameter.
 
-You don't have to pass the entire file path nor the file extension (although you could). The folder will be determined by the `filesLocation` option. It's sufficient to just pass the language code.
+You don't have to pass the entire file path or file extension (although you could). The `filesLocation` option will determine folder. It's sufficient just to pass the language code.
 
 ```js
 var translator = new Translator({
@@ -431,7 +431,7 @@ console.log(translator.currentLanguage);
 // -> "en"
 ```
 
-## Browser Support
+## Browser support
 
 `Simple Translator` already comes minified and transpiled and should work in most browsers. The following browsers are tested:
 
