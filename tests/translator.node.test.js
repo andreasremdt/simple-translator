@@ -4,14 +4,6 @@
 
 import Translator from '../src/translator.js';
 
-// jest.mock(process.cwd() + '/i18n/de.json', () => {
-//   return { title: 'Deutscher Titel', paragraph: 'Hallo Welt' };
-// });
-
-// jest.mock(process.cwd() + '/i18n/en.json', () => {
-//   return { title: 'English title', paragraph: 'Hello World' };
-// });
-
 describe('constructor()', () => {
   let translator;
 
@@ -69,52 +61,62 @@ describe('translatePageTo()', () => {
   });
 });
 
-// describe('fetch()', () => {
-//   let translator;
-//   let consoleSpy;
-//   const RESOURCE_FILES = {
-//     de: { title: 'Deutscher Titel', paragraph: 'Hallo Welt' },
-//     en: { title: 'English title', paragraph: 'Hello World' },
-//   };
+describe('fetch()', () => {
+  let translator;
+  let consoleSpy;
+  const RESOURCE_FILES = {
+    de: { title: 'Deutscher Titel', paragraph: 'Hallo Welt' },
+    en: { title: 'English title', paragraph: 'Hello World' },
+  };
 
-//   beforeEach(() => {
-//     translator = new Translator({ debug: true });
-//     consoleSpy = jest.spyOn(global.console, 'error').mockImplementation();
-//   });
+  jest.mock('fs', () => ({
+    readFileSync: jest.fn((url) => {
+      if (url.includes('de.json')) {
+        return JSON.stringify({
+          title: 'Deutscher Titel',
+          paragraph: 'Hallo Welt',
+        });
+      } else if (url.includes('en.json')) {
+        return JSON.stringify({
+          title: 'English title',
+          paragraph: 'Hello World',
+        });
+      }
+    }),
+  }));
 
-//   afterEach(() => {
-//     translator = null;
-//     jest.clearAllMocks();
-//     delete global.fetch;
-//   });
+  beforeEach(() => {
+    translator = new Translator({ debug: true });
+    consoleSpy = jest.spyOn(global.console, 'error').mockImplementation();
+  });
 
-//   it('fetches a single resource using cjs', (done) => {
-//     translator.fetch('de').then((value) => {
-//       expect(value).toMatchObject(RESOURCE_FILES['de']);
-//       expect(translator.languages.size).toBe(1);
-//       expect(translator.languages.get('de')).toMatchObject(
-//         RESOURCE_FILES['de']
-//       );
-//       done();
-//     });
-//   });
+  it('fetches a single resource using cjs', (done) => {
+    translator.fetch('de').then((value) => {
+      expect(value).toMatchObject(RESOURCE_FILES['de']);
+      expect(translator.languages.size).toBe(1);
+      expect(translator.languages.get('de')).toMatchObject(
+        RESOURCE_FILES['de']
+      );
+      done();
+    });
+  });
 
-//   it('fetches a multiple resources', (done) => {
-//     translator.fetch(['de', 'en']).then((value) => {
-//       expect(value).toMatchObject([RESOURCE_FILES['de'], RESOURCE_FILES['en']]);
-//       expect(translator.languages.size).toBe(2);
-//       done();
-//     });
-//   });
+  it('fetches a multiple resources', (done) => {
+    translator.fetch(['de', 'en']).then((value) => {
+      expect(value).toMatchObject([RESOURCE_FILES['de'], RESOURCE_FILES['en']]);
+      expect(translator.languages.size).toBe(2);
+      done();
+    });
+  });
 
-//   it("displays an error when the resource doesn't exist", (done) => {
-//     translator.fetch('nl').then((value) => {
-//       expect(value).toBeUndefined();
-//       expect(consoleSpy).toHaveBeenCalledTimes(1);
-//       expect(consoleSpy).toHaveBeenCalledWith(
-//         expect.stringContaining('MODULE_NOT_FOUND')
-//       );
-//       done();
-//     });
-//   });
-// });
+  it("displays an error when the resource doesn't exist", (done) => {
+    translator.fetch('nl').then((value) => {
+      expect(value).toBeUndefined();
+      expect(consoleSpy).toHaveBeenCalledTimes(1);
+      expect(consoleSpy).toHaveBeenCalledWith(
+        expect.stringContaining('MODULE_NOT_FOUND')
+      );
+      done();
+    });
+  });
+});

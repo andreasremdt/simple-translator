@@ -330,7 +330,9 @@ class Translator {
 
         urls.forEach((url, index) => {
           try {
-            const json = require(process.cwd() + url);
+            const json = JSON.parse(
+              require('fs').readFileSync(process.cwd() + url, 'utf-8')
+            );
 
             if (save) {
               this.add(sources[index], json);
