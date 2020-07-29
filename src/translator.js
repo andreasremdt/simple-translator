@@ -25,8 +25,14 @@ class Translator {
     this.languages = new Map();
     this.config = Object.assign(Translator.defaultConfig, options);
 
-    const { debug, registerGlobally, detectLanguage } = this.config;
+    const {
+      debug,
+      registerGlobally,
+      detectLanguage,
+      defaultLanguage,
+    } = this.config;
 
+    this._currentLanguage = defaultLanguage;
     this.debug = logger(debug);
 
     if (registerGlobally) {
@@ -170,6 +176,7 @@ class Translator {
       this._replace(elements, toLanguage);
     }
 
+    this._currentLanguage = toLanguage;
     document.documentElement.lang = toLanguage;
 
     if (this.config.persist) {
@@ -186,7 +193,7 @@ class Translator {
    * @param {String} toLanguage The target language
    * @return {(String|null)}
    */
-  translateForKey(key, toLanguage = this.config.defaultLanguage) {
+  translateForKey(key, toLanguage = this.currentLanguage) {
     if (typeof key != 'string') {
       this.debug('INVALID_PARAM_KEY', key);
       return null;
@@ -338,6 +345,15 @@ class Translator {
         resolve(languageFiles.length > 1 ? languageFiles : languageFiles[0]);
       });
     }
+  }
+
+  /**
+   * Return the currently selected language.
+   *
+   * @return {String}
+   */
+  get currentLanguage() {
+    return this._currentLanguage || this._config.defaultLanguage;
   }
 
   /**

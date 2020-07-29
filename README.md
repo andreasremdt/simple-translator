@@ -30,6 +30,7 @@
     - [add(language, translation)](#user-content-addstring-language-object-translation)
     - [remove(language)](#user-content-removestring-language)
     - [fetch(languageFiles, save)](#user-content-fetchstringarray-languagefiles-boolean-save)
+    - [get currentLanguage](#user-content-get-currentlanguage)
 - [Browser Support](#browser-support)
 - [Issues](#issues)
 
@@ -327,9 +328,11 @@ var translator = new Translator({
 
 ### `translateForKey(String: key, String?: language)`
 
-Translates a single translation string into the desired language. If no second language parameter is provided, the `defaultLanguage` is used.
+Translates a single translation string into the desired language. If no second language parameter is provided, then:
 
-If the option `detectLanguage` is set to `true`, then `Simple Translator` will detect the browser's default language. Otherwise it will use the default language.
+- It utilizes the last used language (which is accessible via the getter `currentLanguage`, but only after calling `translatePageTo()` at least once.
+- If no last used language is set and the `detectLanguage` option is enabled, it uses the browser's preferred language.
+- If `detectLanguage` is disabled, it will fallback to the `defaultLanguage` option which by default is `en`.
 
 ```js
 var translator = new Translator({
@@ -347,6 +350,8 @@ translator.translateForKey('header.title');
 > Note that this method is only available in the browser and will throw an error in Node.js.
 
 Translates all DOM elements that match the selector (`'[data-i18n]'` by default) into the specified language. If no language is passed into the method, the `defaultLanguage` will be used.
+
+After this method has been called, the `Simple Translator` instance will remember the language and make it accessible via the getter `currentLanguage`.
 
 ```js
 var translator = new Translator({
@@ -405,6 +410,25 @@ translator.fetch(['de', 'en']).then(...);
 // The second parameter is set to `false`, so the fetched language
 // will not be registered.
 await translator.fetch('de', false);
+```
+
+### `get currentLanguage`
+
+By default, this returns the `defaultLanguage`. After calling `translatePageTo()`, this getter will return the last used language.
+
+```js
+var translator = new Translator({
+  defaultLanguage: 'de',
+});
+
+console.log(translator.currentLanguage);
+// -> "de"
+
+// Calling this methods sets the current language.
+translator.translatePageTo('en');
+
+console.log(translator.currentLanguage);
+// -> "en"
 ```
 
 ## Browser Support

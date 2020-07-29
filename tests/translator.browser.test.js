@@ -610,6 +610,14 @@ describe('translatePageTo()', () => {
 
     expect(document.documentElement.lang).toBe('en');
   });
+
+  it('changes the `_currentLanguage` property', () => {
+    expect(translator._currentLanguage).toBe('en');
+
+    translator.translatePageTo('de');
+
+    expect(translator._currentLanguage).toBe('de');
+  });
 });
 
 describe('fetch()', () => {
@@ -707,5 +715,29 @@ describe('fetch()', () => {
     expect(consoleSpy).toHaveBeenCalledWith(
       expect.stringContaining('INVALID_PARAMETER_SOURCES')
     );
+  });
+});
+
+describe('get currentLanguage()', () => {
+  let translator;
+
+  beforeEach(() => {
+    translator = new Translator({ defaultLanguage: 'de' });
+    translator
+      .add('de', { title: 'Deutscher Titel', paragraph: 'Hallo Welt' })
+      .add('en', { title: 'English title', paragraph: 'Hello World' });
+  });
+
+  afterEach(() => {
+    translator = null;
+    jest.clearAllMocks();
+  });
+
+  it('returns the correct language code', () => {
+    expect(translator.currentLanguage).toBe('de');
+
+    translator.translatePageTo('en');
+
+    expect(translator.currentLanguage).toBe('en');
   });
 });
