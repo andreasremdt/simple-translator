@@ -170,6 +170,8 @@ class Translator {
       this._replace(elements, toLanguage);
     }
 
+    document.documentElement.lang = toLanguage;
+
     if (this.config.persist) {
       localStorage.setItem(this.config.persistKey, toLanguage);
     }

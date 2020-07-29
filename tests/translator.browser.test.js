@@ -600,6 +600,16 @@ describe('translatePageTo()', () => {
       expect.stringContaining('NO_LANGUAGE_REGISTERED')
     );
   });
+
+  it('changes the `lang` attribute', () => {
+    translator.translatePageTo('de');
+
+    expect(document.documentElement.lang).toBe('de');
+
+    translator.translatePageTo();
+
+    expect(document.documentElement.lang).toBe('en');
+  });
 });
 
 describe('fetch()', () => {
