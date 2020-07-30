@@ -1,15 +1,13 @@
 module.exports = {
   env: {
     browser: true,
-    es6: true
+    es2020: true,
+    node: true,
+    jest: true,
   },
-  extends: "eslint:recommended",
-  globals: {
-    Atomics: "readonly",
-    SharedArrayBuffer: "readonly"
-  },
+  extends: ['google', 'eslint:recommended', 'prettier'],
   parserOptions: {
-    ecmaVersion: 2018,
-    sourceType: "module"
-  }
+    ecmaVersion: 11,
+    sourceType: 'module',
+  },
 };

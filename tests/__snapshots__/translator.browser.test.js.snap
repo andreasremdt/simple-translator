@@ -1,0 +1,14 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`constructor() has sensible default options 1`] = `
+Object {
+  "debug": false,
+  "defaultLanguage": "en",
+  "detectLanguage": true,
+  "filesLocation": "/i18n",
+  "persist": false,
+  "persistKey": "preferred_language",
+  "registerGlobally": "__",
+  "selector": "[data-i18n]",
+}
+`;
