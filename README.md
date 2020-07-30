@@ -79,7 +79,12 @@ yarn add @andreasremdt/simple-translator
 
 ## Examples
 
-For a full demo in the browser, open this [CodeSandbox link](https://codesandbox.io/s/simple-translator-demo-e33ye?file=/src/index.js).
+Want to see the bigger picture? Check out the live demos at CodeSandbox and see how you can integrate the library with popular frameworks or in pure JavaScript:
+
+- [Vanilla JavaScript](https://codesandbox.io/s/simple-translator-vanilllajs-e33ye)
+- [React](https://codesandbox.io/s/simple-translator-react-1mtki?file=/src/Content.js:0-27)
+- [Vue.js](https://codesandbox.io/s/simple-translator-vuejs-iep2j?file=/src/main.js)
+- _Lit-Element (Web Components) currently in progress_
 
 ### Translate HTML in the browser
 
