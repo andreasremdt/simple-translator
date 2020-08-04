@@ -167,7 +167,7 @@ class Translator {
 
     const elements =
       typeof this.config.selector == 'string'
-        ? document.querySelectorAll(this.config.selector)
+        ? Array.from(document.querySelectorAll(this.config.selector))
         : this.config.selector;
 
     if (elements.length && elements.length > 0) {
