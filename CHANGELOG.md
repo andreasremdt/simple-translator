@@ -3,6 +3,12 @@
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.0.2] - 2020-08-04
+
+### Changed
+
+- Added compatibility for older browsers (including Safari 9) by using `Array.from` to convert a NodeList into an array.
+
 ## [2.0.1] - 2020-07-30
 
 ### Changed
@@ -28,7 +34,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Added `remove()` to remove languages from the translator.
 - Added `translateForKey()` and `translatePageTo()` to translate single keys or the entire website.
 - Added `get currentLanguage` to get the currently used language.
-- Transpiled and minified UMD, ESM and CJS builds are available via [unpkg](https://unpkg.com/@andreasremdt/simple-translator@2.0.0/dist/umd/translator.min.js) and [npm](https://www.npmjs.com/package/@andreasremdt/simple-translator).
+- Transpiled and minified UMD, ESM and CJS builds are available via [unpkg](https://unpkg.com/@andreasremdt/simple-translator@latest/dist/umd/translator.min.js) and [npm](https://www.npmjs.com/package/@andreasremdt/simple-translator).
 - Added a build system for easier packaging and testing.
 - Added [CONTRIBUTING.md](https://github.com/andreasremdt/simple-translator/CONTRIBUTING.md)
 - Added [CODE_OF_CONDUCT.md](https://github.com/andreasremdt/simple-translator/CODE_OF_CONDUCT.md)

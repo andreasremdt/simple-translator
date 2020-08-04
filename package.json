@@ -1,6 +1,6 @@
 {
   "name": "@andreasremdt/simple-translator",
-  "version": "2.0.1",
+  "version": "2.0.2",
   "description": "Simple client-side translation with pure JavaScript.",
   "main": "dist/cjs/translator.min.js",
   "module": "dist/esm/translator.min.js",

@@ -58,7 +58,7 @@ A UMD build is available via [unpkg](https://unpkg.com). Just paste the followin
 
 ```html
 <script
-  src="https://unpkg.com/@andreasremdt/simple-translator@2.0.0/dist/umd/translator.min.js"
+  src="https://unpkg.com/@andreasremdt/simple-translator@latest/dist/umd/translator.min.js"
   defer
 ></script>
 ```
@@ -96,7 +96,7 @@ Want to see the bigger picture? Check out the live demos at CodeSandbox and see 
 
 <!-- Load the translator either from a CDN or locally -->
 <script
-  src="https://unpkg.com/@andreasremdt/simple-translator@2.0.0/dist/umd/translator.min.js"
+  src="https://unpkg.com/@andreasremdt/simple-translator@latest/dist/umd/translator.min.js"
   defer
 ></script>
 <script defer>
