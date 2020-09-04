@@ -25,14 +25,8 @@ class Translator {
     this.languages = new Map();
     this.config = Object.assign(Translator.defaultConfig, options);
 
-    const {
-      debug,
-      registerGlobally,
-      detectLanguage,
-      defaultLanguage,
-    } = this.config;
+    const { debug, registerGlobally, detectLanguage } = this.config;
 
-    this._currentLanguage = defaultLanguage;
     this.debug = logger(debug);
 
     if (registerGlobally) {
@@ -355,7 +349,7 @@ class Translator {
    * @return {String}
    */
   get currentLanguage() {
-    return this._currentLanguage || this._config.defaultLanguage;
+    return this._currentLanguage || this.config.defaultLanguage;
   }
 
   /**

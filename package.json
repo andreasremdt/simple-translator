@@ -1,6 +1,6 @@
 {
   "name": "@andreasremdt/simple-translator",
-  "version": "2.0.2",
+  "version": "2.0.3",
   "description": "Simple client-side translation with pure JavaScript.",
   "main": "dist/cjs/translator.min.js",
   "module": "dist/esm/translator.min.js",
@@ -13,7 +13,7 @@
     "dev": "rollup --config --watch",
     "lint": "eslint src/*.js --ignore-path .gitignore",
     "format": "prettier src/*.js --write",
-    "test": "jest",
+    "test": "jest ./tests/*.test.js",
     "validate": "npm-run-all --parallel format lint test"
   },
   "repository": {

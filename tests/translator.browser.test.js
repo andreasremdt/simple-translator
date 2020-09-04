@@ -610,14 +610,6 @@ describe('translatePageTo()', () => {
 
     expect(document.documentElement.lang).toBe('en');
   });
-
-  it('changes the `_currentLanguage` property', () => {
-    expect(translator._currentLanguage).toBe('en');
-
-    translator.translatePageTo('de');
-
-    expect(translator._currentLanguage).toBe('de');
-  });
 });
 
 describe('fetch()', () => {
@@ -719,25 +711,39 @@ describe('fetch()', () => {
 });
 
 describe('get currentLanguage()', () => {
-  let translator;
+  let languageGetter;
 
   beforeEach(() => {
-    translator = new Translator({ defaultLanguage: 'de' });
-    translator
-      .add('de', { title: 'Deutscher Titel', paragraph: 'Hallo Welt' })
-      .add('en', { title: 'English title', paragraph: 'Hello World' });
+    languageGetter = jest.spyOn(window.navigator, 'languages', 'get');
+    languageGetter.mockReturnValue(['de-DE', 'de']);
   });
 
   afterEach(() => {
-    translator = null;
     jest.clearAllMocks();
   });
 
-  it('returns the correct language code', () => {
+  it('returns the correct language code with auto-detection', () => {
+    const translator = new Translator();
+    translator
+      .add('de', { title: 'Deutscher Titel', paragraph: 'Hallo Welt' })
+      .add('en', { title: 'English title', paragraph: 'Hello World' });
+
     expect(translator.currentLanguage).toBe('de');
-
     translator.translatePageTo('en');
+    expect(translator.currentLanguage).toBe('en');
+  });
 
+  it('returns the correct language code without auto-detection', () => {
+    const translator = new Translator({
+      detectLanguage: false,
+      defaultLanguage: 'de',
+    });
+    translator
+      .add('de', { title: 'Deutscher Titel', paragraph: 'Hallo Welt' })
+      .add('en', { title: 'English title', paragraph: 'Hello World' });
+
+    expect(translator.currentLanguage).toBe('de');
+    translator.translatePageTo('en');
     expect(translator.currentLanguage).toBe('en');
   });
 });
