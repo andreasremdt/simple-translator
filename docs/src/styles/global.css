@@ -1,0 +1,16 @@
+:root {
+  --gray-dark: #0f172a;
+  --gray-medium: #334155;
+  --gray-light: #e2e8f0;
+  --rose-medium: #f43f5e;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: unset;
+  font: 400 16px/1.6 Inter, sans-serif;
+  color: var(--gray-medium);
+}

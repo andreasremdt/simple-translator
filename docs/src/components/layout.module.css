@@ -1,0 +1,11 @@
+.container {
+  width: clamp(14rem, 90vw, 70rem);
+  margin: auto;
+  display: flex;
+  padding: 2rem 1rem;
+}
+
+.main {
+  flex: 0 1 70%;
+  margin-left: 2rem;
+}
