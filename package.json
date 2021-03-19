@@ -53,11 +53,6 @@
     "rollup": "^2.22.2",
     "rollup-plugin-terser": "^7.0.0"
   },
-  "husky": {
-    "hooks": {
-      "pre-commit": "npm-run-all --parallel validate build"
-    }
-  },
   "jest": {
     "collectCoverageFrom": [
       "src/*.js"
