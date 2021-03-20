@@ -1,9 +1,9 @@
-import React from "react";
-import { graphql } from "gatsby";
-import Helmet from "react-helmet";
-import Sidebar from "./sidebar";
-import PageHeader from "./page-header";
-import * as styles from "./layout.module.css";
+import React from 'react';
+import { graphql } from 'gatsby';
+import Helmet from 'react-helmet';
+import Sidebar from './sidebar';
+import PageHeader from './page-header';
+import * as styles from './layout.module.css';
 
 const Layout = ({ data }) => {
   const { frontmatter, html } = data.markdownRemark;
@@ -18,6 +18,10 @@ const Layout = ({ data }) => {
         <link
           rel="stylesheet"
           href="https://fonts.googleapis.com/css2?family=Inter:wght@200;300;400&display=swap"
+        />
+        <link
+          rel="stylesheet"
+          href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono&display=swap"
         />
       </Helmet>
       <Sidebar />
