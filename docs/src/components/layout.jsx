@@ -1,5 +1,5 @@
 import React from 'react';
-import { graphql } from 'gatsby';
+import { Link, graphql } from 'gatsby';
 import Helmet from 'react-helmet';
 import Sidebar from './sidebar';
 import PageHeader from './page-header';
@@ -30,6 +30,21 @@ const Layout = ({ data }) => {
           {frontmatter.description}
         </PageHeader>
         <div dangerouslySetInnerHTML={{ __html: html }}></div>
+
+        {(frontmatter.prev_link || frontmatter.next_link) && (
+          <footer className={styles.footer}>
+            {frontmatter.prev_link && (
+              <Link to={frontmatter.prev_link} className={styles.button}>
+                &laquo; Previous
+              </Link>
+            )}
+            {frontmatter.next_link && (
+              <Link to={frontmatter.next_link} className={styles.button}>
+                Next &raquo;
+              </Link>
+            )}
+          </footer>
+        )}
       </main>
     </div>
   );
@@ -42,6 +57,8 @@ export const pageQuery = graphql`
       frontmatter {
         title
         description
+        prev_link
+        next_link
       }
     }
   }
