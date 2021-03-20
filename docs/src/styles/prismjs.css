@@ -43,10 +43,8 @@ pre[class*='language-'] {
 
 /* Inline code */
 :not(pre) > code[class*='language-'] {
-  padding: 0.2em;
-  padding-top: 1px;
-  padding-bottom: 1px;
-  background: #f9fafb;
+  padding: 1px 0.4rem;
+  background-color: #f9fafb;
 }
 
 .token.comment,
