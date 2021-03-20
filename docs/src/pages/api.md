@@ -30,27 +30,27 @@ When initializing the `Translator` class, you can pass an object for configurati
 
 ```js
 var translator = new Translator({
-  defaultLanguage: "en",
+  defaultLanguage: 'en',
   detectLanguage: true,
-  selector: "[data-i18n]",
+  selector: '[data-i18n]',
   debug: false,
-  registerGlobally: "__",
+  registerGlobally: '__',
   persist: false,
-  persistKey: "preferred_language",
-  filesLocation: "/i18n",
+  persistKey: 'preferred_language',
+  filesLocation: '/i18n',
 });
 ```
 
-| Key              | Type              | Default              | Description                                                                                                            |
-| ---------------- | ----------------- | -------------------- | ---------------------------------------------------------------------------------------------------------------------- |
-| defaultLanguage  | String            | 'en'                 | The default language, in case nothing else has been specified.                                                         |
-| detectLanguage   | Boolean           | true                 | If set to `true`, it tries to determine the user's desired language based on the browser                               |
-| selector         | String            | '[data-i18n]'        | Elements that match this selector will be translated.                                                                  |
-| debug            | Boolean           | false                | When set to `true`, helpful logs will be printed to the console. Valuable for debugging and problem-solving.           |
-| registerGlobally | String or Boolean | '\_\_'               | When set to a `String`, it will create a global helper with the same name. When set to `false`, it won't register      |
-| persist          | Boolean           | false                | When set to `true`, the last language that was used is saved to localStorage.                                          |
-| persistKey       | String            | 'preferred_language' | Only valid when `persist` is set to `true`. This is the name of the key with which the last used language is stored in |
-| filesLocation    | String            | '/i18n'              | The absolute path (from your project's root) to your localization files.                                               |
+| Key                | Type                  | Default            | Description                                                                                                            |
+| ------------------ | --------------------- | ------------------ | ---------------------------------------------------------------------------------------------------------------------- |
+| `defaultLanguage`  | `String`              | en'                | The default language, in case nothing else has been specified.                                                         |
+| `detectLanguage`   | `Boolean`             | `true`             | If set to `true`, it tries to determine the user's desired language based on the browser                               |
+| `selector`         | `String`              | [data-i18n]        | Elements that match this selector will be translated.                                                                  |
+| `debug`            | `Boolean`             | `false`            | When set to `true`, helpful logs will be printed to the console. Valuable for debugging and problem-solving.           |
+| `registerGlobally` | `String` or `Boolean` | '\_\_'             | When set to a `String`, it will create a global helper with the same name. When set to `false`, it won't register      |
+| `persist`          | `Boolean`             | `false`            | When set to `true`, the last language that was used is saved to localStorage.                                          |
+| `persistKey`       | `String`              | preferred_language | Only valid when `persist` is set to `true`. This is the name of the key with which the last used language is stored in |
+| `filesLocation`    | `String`              | /i18n              | The absolute path (from your project's root) to your localization files.                                               |
 
 ## translateForKey(String: key, String?: language)
 
@@ -62,14 +62,14 @@ Translates a single translation string into the desired language. If no second l
 
 ```js
 var translator = new Translator({
-  defaultLanguage: "de",
+  defaultLanguage: 'de',
 });
 
 // -> translates to English (en)
-translator.translateForKey("header.title", "en");
+translator.translateForKey('header.title', 'en');
 
 // -> translates to German (de)
-translator.translateForKey("header.title");
+translator.translateForKey('header.title');
 ```
 
 ## translatePageTo(String?: language)
@@ -80,11 +80,11 @@ Translates all DOM elements that match the selector (`'[data-i18n]'`by default) 
 
 ```js
 var translator = new Translator({
-  defaultLanguage: "de",
+  defaultLanguage: 'de',
 });
 
 // -> translates the page to English (en)
-translator.translatePageTo("en");
+translator.translatePageTo('en');
 
 // -> translates the page to German (de)
 translator.translatePageTo();
@@ -106,7 +106,7 @@ translator
 Removes a registered language from the translator. It accepts only the language code as a parameter. The method `remove()`returns the instance of `Translator`, meaning that it can be chained.
 
 ```js
-translator.remove("de");
+translator.remove('de');
 ```
 
 ## fetch(String|Array: languageFiles, Boolean?: save)
@@ -141,14 +141,14 @@ By default, this returns the `defaultLanguage`. After calling `translatePageTo()
 
 ```js
 var translator = new Translator({
-  defaultLanguage: "de",
+  defaultLanguage: 'de',
 });
 
 console.log(translator.currentLanguage);
 // -> "de"
 
 // Calling this methods sets the current language.
-translator.translatePageTo("en");
+translator.translatePageTo('en');
 
 console.log(translator.currentLanguage);
 // -> "en"

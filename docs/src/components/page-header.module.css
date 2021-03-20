@@ -1,11 +1,3 @@
-.title {
-  margin: unset;
-  font-weight: 300;
-  font-size: 60px;
-  line-height: 1.1;
-  color: var(--gray-dark);
-}
-
 .description {
   font-size: 22px;
   font-weight: 300;

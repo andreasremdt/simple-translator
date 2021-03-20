@@ -16,6 +16,7 @@
 
 .link {
   margin-bottom: 0.5rem;
+  border-bottom: unset;
   text-decoration: none;
   color: var(--gray-medium);
   transition: color 0.1s ease-out, transform 0.25s ease-out;
