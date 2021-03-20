@@ -1,8 +1,19 @@
-import React from "react";
-import { Link } from "gatsby";
-import * as styles from "./sidebar.module.css";
+import React, { useEffect, useState } from 'react';
+import { Link } from 'gatsby';
+import * as styles from './sidebar.module.css';
+
+const TUTORIAL = 'sidebar.tutorial.open';
+const EXAMPLES = 'sidebar.examples.open';
 
 const Sidebar = () => {
+  const [isTutorialOpen, setIsTutorialOpen] = useState(false);
+  const [isExamplesOpen, setIsExamplesOpen] = useState(false);
+
+  useEffect(() => {
+    setIsTutorialOpen(Boolean(Number(localStorage.getItem(TUTORIAL))));
+    setIsExamplesOpen(Boolean(Number(localStorage.getItem(EXAMPLES))));
+  }, []);
+
   return (
     <nav className={styles.container}>
       <span className={styles.title}>Simple Translator</span>
@@ -17,8 +28,15 @@ const Sidebar = () => {
       >
         Quickstart
       </Link>
-      <details className={styles.details}>
-        <summary className={styles.summary}>Tutorial</summary>
+      <details className={styles.details} open={isTutorialOpen}>
+        <summary
+          className={styles.summary}
+          onClick={() => {
+            localStorage.setItem(TUTORIAL, isTutorialOpen ? '0' : '1');
+          }}
+        >
+          Tutorial
+        </summary>
         <Link
           className={styles.link}
           activeClassName={styles.active}
@@ -62,8 +80,15 @@ const Sidebar = () => {
           06 - Translation in JavaScript
         </Link>
       </details>
-      <details className={styles.details}>
-        <summary className={styles.summary}>Examples</summary>
+      <details className={styles.details} open={isExamplesOpen}>
+        <summary
+          className={styles.summary}
+          onClick={() => {
+            localStorage.setItem(EXAMPLES, isExamplesOpen ? '0' : '1');
+          }}
+        >
+          Examples
+        </summary>
 
         <Link
           className={styles.link}
