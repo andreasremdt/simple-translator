@@ -208,4 +208,6 @@ Let's have a look at our markup after applying the new attributes:
 </html>
 ```
 
+Copy this HTML into the `index.html` that you created on the previous page. We will translate it at the end of the tutorial.
+
 With that out of the way, you can head over to the next section, which will guide you through the creation of translation files in JSON.
