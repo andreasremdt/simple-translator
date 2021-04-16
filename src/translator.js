@@ -187,7 +187,7 @@ class Translator {
    * @param {String} toLanguage The target language
    * @return {(String|null)}
    */
-  translateForKey(key, toLanguage = this.currentLanguage) {
+  translateForKey(key, toLanguage = this.config.defaultLanguage) {
     if (typeof key != 'string') {
       this.debug('INVALID_PARAM_KEY', key);
       return null;
@@ -344,12 +344,46 @@ class Translator {
   }
 
   /**
+   * Sets the default language of the translator instance.
+   *
+   * @param {String} language
+   * @return {void}
+   */
+  setDefaultLanguage(language) {
+    if (typeof language != 'string') {
+      this.debug('INVALID_PARAM_LANGUAGE', language);
+      return;
+    }
+
+    if (language.length == 0) {
+      this.debug('EMPTY_PARAM_LANGUAGE');
+      return;
+    }
+
+    if (!this.languages.has(language)) {
+      this.debug('NO_LANGUAGE_REGISTERED', language);
+      return null;
+    }
+
+    this.config.defaultLanguage = language;
+  }
+
+  /**
    * Return the currently selected language.
    *
    * @return {String}
    */
   get currentLanguage() {
     return this._currentLanguage || this.config.defaultLanguage;
+  }
+
+  /**
+   * Returns the current default language;
+   *
+   * @return {String}
+   */
+  get defaultLanguage() {
+    return this.config.defaultLanguage;
   }
 
   /**
