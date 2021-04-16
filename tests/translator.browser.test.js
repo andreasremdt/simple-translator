@@ -710,6 +710,61 @@ describe('fetch()', () => {
   });
 });
 
+describe('setDefaultLanguage()', () => {
+  let translator;
+  let consoleSpy;
+
+  beforeEach(() => {
+    translator = new Translator({ debug: true });
+    translator
+      .add('de', { title: 'Deutscher Titel', paragraph: 'Hallo Welt' })
+      .add('en', { title: 'English title', paragraph: 'Hello World' });
+    consoleSpy = jest.spyOn(window.console, 'error').mockImplementation();
+  });
+
+  afterEach(() => {
+    translator = null;
+    jest.clearAllMocks();
+  });
+
+  it('sets a new default language', () => {
+    translator.setDefaultLanguage('de');
+
+    expect(translator.translateForKey('title')).toBe('Deutscher Titel');
+    expect(translator.config.defaultLanguage).toBe('de');
+
+    translator.setDefaultLanguage('en');
+
+    expect(translator.translateForKey('title')).toBe('English title');
+    expect(translator.config.defaultLanguage).toBe('en');
+  });
+
+  it("displays an error when the given language isn't registered", () => {
+    translator.setDefaultLanguage('es');
+
+    expect(consoleSpy).toHaveBeenCalledTimes(1);
+    expect(consoleSpy).toHaveBeenCalledWith(
+      expect.stringContaining('NO_LANGUAGE_REGISTERED')
+    );
+  });
+
+  it('displays an error when the given language is invalid', () => {
+    translator.setDefaultLanguage();
+    translator.setDefaultLanguage('');
+    translator.setDefaultLanguage(false);
+    translator.setDefaultLanguage({});
+    translator.setDefaultLanguage([]);
+
+    expect(consoleSpy).toHaveBeenCalledTimes(5);
+    expect(consoleSpy).toHaveBeenCalledWith(
+      expect.stringContaining('INVALID_PARAM_LANGUAGE')
+    );
+    expect(consoleSpy).toHaveBeenCalledWith(
+      expect.stringContaining('EMPTY_PARAM_LANGUAGE')
+    );
+  });
+});
+
 describe('get currentLanguage()', () => {
   let languageGetter;
 
