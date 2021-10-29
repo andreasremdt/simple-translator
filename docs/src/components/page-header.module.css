@@ -1,0 +1,8 @@
+.description {
+  font-size: 22px;
+  font-weight: 300;
+  margin: 0.5rem 0 2.5rem;
+  padding-bottom: 2rem;
+  border-bottom: 3px solid var(--gray-light);
+  letter-spacing: -1px;
+}

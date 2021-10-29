@@ -1,0 +1,28 @@
+{
+  "name": "simple-translator-docs",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Simple Translator Docs",
+  "author": "Andreas Remdt",
+  "keywords": [
+    "gatsby"
+  ],
+  "scripts": {
+    "start": "gatsby develop",
+    "build": "gatsby build",
+    "serve": "gatsby serve",
+    "clean": "gatsby clean"
+  },
+  "dependencies": {
+    "gatsby": "^3.0.1",
+    "gatsby-plugin-manifest": "^3.0.0",
+    "gatsby-plugin-react-helmet": "^4.0.0",
+    "gatsby-remark-prismjs": "^4.1.0",
+    "gatsby-source-filesystem": "^3.0.0",
+    "gatsby-transformer-remark": "^3.0.0",
+    "prismjs": "^1.23.0",
+    "react": "^17.0.1",
+    "react-dom": "^17.0.1",
+    "react-helmet": "^6.1.0"
+  }
+}

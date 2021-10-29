@@ -1,0 +1,31 @@
+.container {
+  width: clamp(14rem, 90vw, 70rem);
+  margin: auto;
+  display: flex;
+  padding: 2rem 1rem;
+}
+
+.main {
+  flex: 0 1 70%;
+  margin-left: 2rem;
+}
+
+.footer {
+  display: flex;
+  justify-content: space-between;
+  margin: 2.5rem 0 0 0;
+  padding-top: 2rem;
+  border-top: 3px solid var(--gray-light);
+}
+
+.button {
+  background-color: var(--gray-light);
+  border: unset;
+  padding: 0.7rem 1.5rem;
+  border-radius: 4px;
+}
+
+.button:hover {
+  background-color: var(--rose-medium);
+  color: white;
+}
