@@ -74,7 +74,9 @@ class Translator {
    * If no localStorage entry has been found, use the default browser language.
    */
   _detectLanguage() {
-    const inMemory = localStorage.getItem(this.config.persistKey);
+    const inMemory = window.localStorage
+      ? localStorage.getItem(this.config.persistKey)
+      : undefined;
 
     if (inMemory) {
       this.config.defaultLanguage = inMemory;
@@ -173,7 +175,7 @@ class Translator {
     this._currentLanguage = toLanguage;
     document.documentElement.lang = toLanguage;
 
-    if (this.config.persist) {
+    if (this.config.persist && window.localStorage) {
       localStorage.setItem(this.config.persistKey, toLanguage);
     }
   }
